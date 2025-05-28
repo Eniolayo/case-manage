@@ -29,6 +29,13 @@ import {
 
 type FilterType = "ALL" | "DEBIT_CARD" | "CREDIT_CARD" | "WALLET";
 type TabType = "all" | "my" | "high-priority";
+type StatusFilter =
+  | "all"
+  | "high-priority"
+  | "new"
+  | "in-progress"
+  | "escalated"
+  | "resolved";
 
 // Sample data for demonstration
 type CaseStatus = "In Progress" | "Resolved" | "Escalated";
@@ -220,13 +227,37 @@ const allCases: Case[] = [
 export default function Home() {
   const [primaryFilter, setPrimaryFilter] = useState<FilterType>("ALL");
   const [activeTab, setActiveTab] = useState<TabType>("all");
-
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const getFilteredCases = () => {
     let filtered = allCases;
 
     // Apply primary filter
     if (primaryFilter !== "ALL") {
       filtered = filtered.filter((case_) => case_.cardType === primaryFilter);
+    }
+
+    // Apply status filter
+    switch (statusFilter) {
+      case "high-priority":
+        filtered = filtered.filter((case_) => case_.score >= 700);
+        break;
+      case "new":
+        filtered = filtered.filter((c) => {
+          const createdDate = new Date(c.created);
+          const oneDayAgo = new Date();
+          oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+          return createdDate >= oneDayAgo;
+        });
+        break;
+      case "in-progress":
+        filtered = filtered.filter((case_) => case_.status === "In Progress");
+        break;
+      case "escalated":
+        filtered = filtered.filter((case_) => case_.status === "Escalated");
+        break;
+      case "resolved":
+        filtered = filtered.filter((case_) => case_.status === "Resolved");
+        break;
     }
 
     // Apply tab filter
@@ -265,11 +296,26 @@ export default function Home() {
       escalated: cases.filter((c) => c.status === "Escalated").length,
     };
   };
+  const getFilterTitle = (filter: StatusFilter) => {
+    switch (filter) {
+      case "high-priority":
+        return "High Priority Cases";
+      case "new":
+        return "New Cases";
+      case "in-progress":
+        return "In Progress Cases";
+      case "escalated":
+        return "Escalated Cases";
+      case "resolved":
+        return "Resolved Cases";
+      default:
+        return "Recent Cases";
+    }
+  };
 
-  const handleCardClick = (status: string) => {
-    // Filter cases by status when card is clicked
-    console.log(`Filtering by status: ${status}`);
-    // In a real app, you would update the filter state here
+  const handleCardClick = (status: StatusFilter) => {
+    // Toggle filter: if clicking the same card, reset to "all", otherwise set new filter
+    setStatusFilter(statusFilter === status ? "all" : status);
   };
 
   const stats = getStatsForFilter(primaryFilter);
@@ -366,8 +412,13 @@ export default function Home() {
 
           <TabsContent value={activeTab} className="mt-6">
             <div className="grid gap-4  grid-cols-1 auto-rows-auto md:grid-cols-3 lg:grid-cols-5">
+              {" "}
               <Card
-                className="cursor-pointer transition-colors hover:bg-muted/50"
+                className={`cursor-pointer transition-colors hover:bg-muted/50 ${
+                  statusFilter === "high-priority"
+                    ? "ring-2 ring-purple-500 bg-purple-50"
+                    : ""
+                }`}
                 onClick={() => handleCardClick("high-priority")}
               >
                 <CardContent className="p-4">
@@ -403,9 +454,13 @@ export default function Home() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card>{" "}
               <Card
-                className="cursor-pointer transition-colors hover:bg-muted/50"
+                className={`cursor-pointer transition-colors hover:bg-muted/50 ${
+                  statusFilter === "new"
+                    ? "ring-2 ring-blue-500 bg-blue-50"
+                    : ""
+                }`}
                 onClick={() => handleCardClick("new")}
               >
                 <CardContent className="p-4">
@@ -438,9 +493,13 @@ export default function Home() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card>{" "}
               <Card
-                className="cursor-pointer transition-colors hover:bg-muted/50"
+                className={`cursor-pointer transition-colors hover:bg-muted/50 ${
+                  statusFilter === "in-progress"
+                    ? "ring-2 ring-yellow-500 bg-yellow-50"
+                    : ""
+                }`}
                 onClick={() => handleCardClick("in-progress")}
               >
                 <CardContent className="p-4">
@@ -472,9 +531,13 @@ export default function Home() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card>{" "}
               <Card
-                className="cursor-pointer transition-colors hover:bg-muted/50"
+                className={`cursor-pointer transition-colors hover:bg-muted/50 ${
+                  statusFilter === "escalated"
+                    ? "ring-2 ring-red-500 bg-red-50"
+                    : ""
+                }`}
                 onClick={() => handleCardClick("escalated")}
               >
                 <CardContent className="p-4">
@@ -506,9 +569,13 @@ export default function Home() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card>{" "}
               <Card
-                className="cursor-pointer transition-colors hover:bg-muted/50"
+                className={`cursor-pointer transition-colors hover:bg-muted/50 ${
+                  statusFilter === "resolved"
+                    ? "ring-2 ring-green-500 bg-green-50"
+                    : ""
+                }`}
                 onClick={() => handleCardClick("resolved")}
               >
                 <CardContent className="p-4">
@@ -553,10 +620,16 @@ export default function Home() {
 
             <div className="mt-8">
               <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                {" "}
                 <h3 className="text-lg sm:text-xl font-bold">
-                  {activeTab === "all" && "Recent Cases"}
-                  {activeTab === "my" && "My Cases"}
-                  {activeTab === "high-priority" && "High Priority Cases"}
+                  {statusFilter !== "all" && getFilterTitle(statusFilter)}
+                  {statusFilter === "all" &&
+                    activeTab === "all" &&
+                    "Recent Cases"}
+                  {statusFilter === "all" && activeTab === "my" && "My Cases"}
+                  {statusFilter === "all" &&
+                    activeTab === "high-priority" &&
+                    "High Priority Cases"}
                   {primaryFilter !== "ALL" &&
                     ` - ${primaryFilter.replace("_", " ")}`}
                 </h3>
