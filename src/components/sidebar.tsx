@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   LayoutDashboard,
   FileText,
   AlertTriangle,
@@ -95,13 +101,13 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 px-3 pt-6 pb-4">
         {navigation.map((item) => {
           const isActive = pathname === item.href;
-          return (
+          const navigationItem = (
             <Link
               key={item.name}
               to={item.href}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors group",
+                "flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors group relative",
                 isActive
                   ? "bg-gray-800 text-white"
                   : "text-gray-300 hover:bg-gray-800 hover:text-white",
@@ -120,13 +126,35 @@ export function Sidebar() {
                   {item.badge}
                 </Badge>
               )}
-              {item.badge && isCollapsed && !isMobile && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                  {item.name} ({item.badge})
-                </div>
-              )}
             </Link>
           );
+
+          // Wrap with tooltip when collapsed and not mobile
+          if (isCollapsed && !isMobile) {
+            return (
+              <Tooltip key={item.name} delayDuration={300}>
+                <TooltipTrigger asChild>{navigationItem}</TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="bg-gray-800 text-white border-gray-700"
+                >
+                  <div className="flex items-center gap-2">
+                    <span>{item.name}</span>
+                    {item.badge && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-gray-700 text-gray-200"
+                      >
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            );
+          }
+
+          return navigationItem;
         })}
       </nav>
 
@@ -146,27 +174,45 @@ export function Sidebar() {
           )}
         </div>
         <div className="space-y-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(
-              "text-gray-300 hover:bg-gray-800 hover:text-white",
-              isCollapsed && !isMobile ? "w-8 h-8 p-0" : "w-full justify-start"
-            )}
-            onClick={handleLogout}
-          >
-            <LogOut className="h-4 w-4" />
-            {(!isCollapsed || isMobile) && (
-              <span className="ml-2">Sign out</span>
-            )}
-          </Button>
+          {isCollapsed && !isMobile ? (
+            <Tooltip delayDuration={300}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-300 hover:bg-gray-800 hover:text-white w-8 h-8 p-0"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="bg-gray-800 text-white border-gray-700"
+              >
+                Sign out
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-gray-300 hover:bg-gray-800 hover:text-white w-full justify-start"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4" />
+              {(!isCollapsed || isMobile) && (
+                <span className="ml-2">Sign out</span>
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </>
   );
 
   return (
-    <>
+    <TooltipProvider>
       {/* Desktop Sidebar */}
       <div
         className={cn(
@@ -177,18 +223,28 @@ export function Sidebar() {
         <SidebarContent />
 
         {/* Collapse Toggle */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute right-3 top-14 h-6 w-6 rounded-full bg-gray-800 text-white border border-gray-600"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-        >
-          {isCollapsed ? (
-            <ChevronRight className="h-3 w-3" />
-          ) : (
-            <ChevronLeft className="h-3 w-3" />
-          )}
-        </Button>
+        <Tooltip delayDuration={300}>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute right-3 top-14 h-6 w-6 rounded-full bg-gray-800 text-white border border-gray-600"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+            >
+              {isCollapsed ? (
+                <ChevronRight className="h-3 w-3" />
+              ) : (
+                <ChevronLeft className="h-3 w-3" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent
+            side="right"
+            className="bg-gray-800 text-white border-gray-700"
+          >
+            {isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          </TooltipContent>
+        </Tooltip>
       </div>
 
       {/* Mobile Sidebar */}
@@ -212,6 +268,6 @@ export function Sidebar() {
           </div>
         </SheetContent>
       </Sheet>
-    </>
+    </TooltipProvider>
   );
 }
