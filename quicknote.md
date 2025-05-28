@@ -1,0 +1,1 @@
+- transcription of the voice note should be shown in case details and during creation.
