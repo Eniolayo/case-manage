@@ -57,6 +57,7 @@ export function CaseCharts({ cases }: CaseChartsProps) {
         return "#6b7280"; // Gray for unknown status
     }
   };
+  console.log(statusValues);
 
   const statusColors = statusLabels.map(getStatusColor);
 

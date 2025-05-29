@@ -143,6 +143,7 @@ export interface CaseListParams {
   createdTo?: number;
   sortBy?: "createdAt" | "updatedAt";
   sortOrder?: "asc" | "desc";
+  assignedTo?: number;
 }
 
 export interface CommentListParams {

@@ -10,7 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CaseList } from "@/components/case-list";
-import { PageHeader } from "@/components/page-header";
+import { useCases } from "@/hooks/use-api";
+import { CaseStatus, CaseSummary } from "@/lib/api-types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,6 +20,8 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
+import { PageHeader } from "@/components/page-header";
+import { CaseListSkeleton } from "@/components/skeleton-loaders";
 
 type FilterType = "ALL" | "DEBIT_CARD" | "CREDIT_CARD" | "WALLET";
 type StatusFilter = "ALL" | "IN_PROGRESS" | "RESOLVED" | "ESCALATED";
@@ -27,89 +30,41 @@ export default function MyCasesPage() {
   const [primaryFilter, setPrimaryFilter] = useState<FilterType>("ALL");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  // Sample data for demonstration - filtered to show only current user's cases
-  const myCases: {
-    id: string;
-    entityId: string;
-    status: string;
-    priority: "high" | "low" | "medium";
-    assignee: string;
-    created: string;
-    cardType: string;
-  }[] = [
-    {
-      id: "1030",
-      entityId: "1234 56XX XXXX 0789",
-      status: "In Progress",
-      priority: "high",
-      assignee: "John Doe",
-      created: "2023-05-20 09:30",
-      cardType: "DEBIT_CARD",
-    },
-    {
-      id: "1027",
-      entityId: "4567 89XX XXXX 0123",
-      status: "In Progress",
-      priority: "low",
-      assignee: "John Doe",
-      created: "2023-05-17 16:20",
-      cardType: "DEBIT_CARD",
-    },
-    {
-      id: "1024",
-      entityId: "8901 23XX XXXX 4567",
-      status: "Escalated",
-      priority: "high",
-      assignee: "John Doe",
-      created: "2023-05-14 13:45",
-      cardType: "CREDIT_CARD",
-    },
-  ];
+  const [currentPage] = useState(1);
+  const pageSize = 20;
+  // Get current user ID from local storage
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const currentUserId = parseInt(currentUser.id);
 
-  /* 
-  "high" | "low" | "medium"
-  */
-  const getFilteredCases = (): {
-    id: string;
-    entityId: string;
-    status: string;
-    priority: "high" | "low" | "medium";
-    assignee: string;
-    created: string;
-    cardType: string;
-  }[] => {
-    let filtered = myCases;
+  // Use the API hook with proper filtering including assignedTo
+  const { data: casesData, isLoading } = useCases({
+    page: currentPage,
+    pageSize,
+    status: statusFilter === "ALL" ? undefined : (statusFilter as CaseStatus),
+    search: searchQuery || undefined,
+    assignedTo: currentUserId, // Filter by current user
+  });
 
-    // Apply primary filter
-    if (primaryFilter !== "ALL") {
-      filtered = filtered.filter((case_) => case_.cardType === primaryFilter);
-    }
+  if (isLoading) {
+    return <CaseListSkeleton />;
+  }
 
-    // Apply status filter
-    if (statusFilter !== "ALL") {
-      const statusMap = {
-        IN_PROGRESS: "In Progress",
-        RESOLVED: "Resolved",
-        ESCALATED: "Escalated",
-      };
-      filtered = filtered.filter(
-        (case_) => case_.status === statusMap[statusFilter]
-      );
-    }
+  const cases = casesData?.data || [];
+  const listData = cases.map((case_: CaseSummary) => ({
+    id: case_.id.toString(),
+    entityId: case_.entityId.toString(),
+    status: case_.status,
+    priority: case_.priority.toLowerCase() as "high" | "medium" | "low",
+    assignee: case_.assignedTo ? `User ${case_.assignedTo}` : "Unassigned",
+    created: new Date(case_.createdAt).toLocaleString(),
+    cardType: "DEBIT_CARD", // This would come from the API in a real app
+  }));
 
-    // Apply search filter
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (case_) =>
-          case_.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          case_.entityId.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    return filtered;
-  };
-
-  const filteredCases = getFilteredCases();
+  // Filter by card type (this would ideally be done by the API)
+  const filteredList =
+    primaryFilter === "ALL"
+      ? listData
+      : listData.filter((c) => c.cardType === primaryFilter);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -191,7 +146,7 @@ export default function MyCasesPage() {
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-medium">
-              My Cases ({filteredCases.length})
+              My Cases ({filteredList.length})
             </h3>
             {(primaryFilter !== "ALL" ||
               statusFilter !== "ALL" ||
@@ -211,9 +166,9 @@ export default function MyCasesPage() {
           </div>
         </div>
 
-        <CaseList cases={filteredCases} showAssignToMe={false} />
+        <CaseList cases={filteredList} showAssignToMe={false} />
 
-        {filteredCases.length === 0 && (
+        {filteredList.length === 0 && (
           <div className="text-center py-12">
             <h3 className="text-lg font-semibold mb-2">No cases found</h3>
             <p className="text-muted-foreground mb-4">
@@ -231,19 +186,24 @@ export default function MyCasesPage() {
         )}
 
         {/* Pagination */}
-        {filteredCases.length > 0 && (
+        {filteredList.length > 0 && casesData?.pagination && (
           <div className="mt-6 flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              Showing {filteredCases.length} of {myCases.length} cases
+              Showing {filteredList.length} of {casesData.pagination.totalItems}{" "}
+              cases
             </p>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" disabled>
+              <Button variant="outline" size="sm" disabled={currentPage === 1}>
                 Previous
               </Button>
               <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                1
+                {currentPage}
               </Button>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === casesData.pagination.totalPages}
+              >
                 Next
               </Button>
             </div>

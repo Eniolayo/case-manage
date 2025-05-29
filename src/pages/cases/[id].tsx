@@ -89,8 +89,6 @@ export default function CaseDetailPage() {
   const { data: customerData, isLoading: customerLoading } = useCustomer(
     caseData?.customerId || 0
   );
-  console.log("Case Data:", caseData, "Comments Data:", commentsData);
-  console.log("Customer Data:", customerData);
 
   const [showForwardDialog, setShowForwardDialog] = useState(false);
   const [comment, setComment] = useState("");
@@ -335,7 +333,7 @@ export default function CaseDetailPage() {
                       Case Status
                     </Label>
                     <div className="flex items-center gap-2">
-                      {getStatusBadge("in-progress")}
+                      {getStatusBadge(caseData.status)}
                     </div>
                   </div>{" "}
                   <div>

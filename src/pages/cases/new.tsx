@@ -48,7 +48,7 @@ export default function NewCasePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [voiceNote, setVoiceNote] = useState<Blob | null>(null);
   const [voiceNoteDuration, setVoiceNoteDuration] = useState(0);
-  const [voiceNoteTranscription, setVoiceNoteTranscription] = useState("");
+  // const [voiceNoteTranscription, setVoiceNoteTranscription] = useState("");
 
   const validateForm = (formData: FormData): boolean => {
     const errors: Record<string, string> = {};
@@ -92,9 +92,9 @@ export default function NewCasePage() {
   ) => {
     setVoiceNote(audioBlob);
     setVoiceNoteDuration(duration);
-    if (transcription) {
-      setVoiceNoteTranscription(transcription);
-    }
+    // if (transcription) {
+    //   setVoiceNoteTranscription(transcription);
+    // }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -116,7 +116,7 @@ export default function NewCasePage() {
         fathersName: formData.get("fathers-name"),
         cardStatus: formData.get("card-status"),
         comment: formData.get("comment"),
-        voiceNoteTranscription: voiceNoteTranscription,
+        // voiceNoteTranscription: voiceNoteTranscription,
       };
 
       // Simulate case creation API call
@@ -425,9 +425,9 @@ export default function NewCasePage() {
                       <Label>Voice Note (Optional)</Label>{" "}
                       <VoiceRecorder
                         onRecordingComplete={handleVoiceRecording}
-                        showTranscription={true}
+                        showTranscription={false}
                       />
-                      {voiceNote && (
+                      {/* {voiceNote && (
                         <div className="space-y-2">
                           <p className="text-sm text-muted-foreground">
                             Voice note recorded ({Math.round(voiceNoteDuration)}
@@ -444,7 +444,7 @@ export default function NewCasePage() {
                             </div>
                           )}
                         </div>
-                      )}
+                      )} */}
                     </div>
 
                     <Alert>

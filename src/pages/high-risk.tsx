@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, Download, AlertTriangle } from "lucide-react";
+import { ArrowUpDown, Download } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -9,7 +9,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CaseList } from "@/components/case-list";
-import { PageHeader } from "@/components/page-header";
+import { useCases } from "@/hooks/use-api";
+import { CaseStatus, CaseSummary } from "@/lib/api-types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,7 +19,8 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
-import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/page-header";
+import { CaseListSkeleton } from "@/components/skeleton-loaders";
 
 type FilterType = "ALL" | "DEBIT_CARD" | "CREDIT_CARD" | "WALLET";
 type StatusFilter = "ALL" | "IN_PROGRESS" | "RESOLVED" | "ESCALATED";
@@ -27,103 +29,67 @@ export default function HighRiskPage() {
   const [primaryFilter, setPrimaryFilter] = useState<FilterType>("ALL");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  // Sample data for demonstration - only high-risk cases
-  const highRiskCases: {
-    id: string;
-    entityId: string;
-    status: string;
-    priority: "high" | "low" | "medium";
-    assignee: string;
-    created: string;
-    cardType: string;
-  }[] = [
-    {
-      id: "1030",
-      entityId: "1234 56XX XXXX 0789",
-      status: "In Progress",
-      priority: "high",
-      assignee: "John Doe",
-      created: "2023-05-20 09:30",
-      cardType: "DEBIT_CARD",
-    },
-    {
-      id: "1028",
-      entityId: "9012 34XX XXXX 5678",
-      status: "Escalated",
-      priority: "high",
-      assignee: "Robert Johnson",
-      created: "2023-05-18 11:45",
-      cardType: "WALLET",
-    },
-    {
-      id: "1025",
-      entityId: "2345 67XX XXXX 8901",
-      status: "In Progress",
-      priority: "high",
-      assignee: "Bob Wilson",
-      created: "2023-05-15 14:30",
-      cardType: "WALLET",
-    },
-    {
-      id: "1024",
-      entityId: "8901 23XX XXXX 4567",
-      status: "Escalated",
-      priority: "high",
-      assignee: "John Doe",
-      created: "2023-05-14 13:45",
-      cardType: "CREDIT_CARD",
-    },
-  ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
-  const getFilteredCases = () => {
-    let filtered = highRiskCases;
+  // Use the API hook with proper filtering for high priority cases
+  const {
+    data: casesData,
+    isLoading,
+    error,
+  } = useCases({
+    page: currentPage,
+    pageSize,
+    status: statusFilter === "ALL" ? undefined : (statusFilter as CaseStatus),
+    search: searchQuery || undefined,
+    priority: "High", // Always filter for high priority cases
+    sortBy: "createdAt", // Sort by creation date by default
+    sortOrder: "desc", // Show newest first
+  });
 
-    // Apply primary filter
-    if (primaryFilter !== "ALL") {
-      filtered = filtered.filter((case_) => case_.cardType === primaryFilter);
-    }
+  if (isLoading) {
+    return <CaseListSkeleton />;
+  }
 
-    // Apply status filter
-    if (statusFilter !== "ALL") {
-      const statusMap = {
-        IN_PROGRESS: "In Progress",
-        RESOLVED: "Resolved",
-        ESCALATED: "Escalated",
-      };
-      filtered = filtered.filter(
-        (case_) => case_.status === statusMap[statusFilter]
-      );
-    }
+  if (error) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <PageHeader title="High Risk Cases" />
+        <main className="flex-1 p-6">
+          <div className="text-center py-8">
+            <p className="text-red-500">
+              Error loading cases: {error?.message || "Unknown error"}
+            </p>
+            <Button onClick={() => window.location.reload()} className="mt-4">
+              Try Again
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
-    // Apply search filter
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (case_) =>
-          case_.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          case_.entityId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          case_.assignee.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+  const cases = casesData?.data || [];
+  // Convert API cases to the format expected by CaseList
+  const listData = cases.map((case_) => ({
+    id: case_.id.toString(),
+    entityId: case_.entityId.toString(),
+    status: case_.status,
+    priority: case_.priority.toLowerCase() as "high" | "medium" | "low",
+    assignee: case_.assignedTo ? `User ${case_.assignedTo}` : "Unassigned",
+    created: new Date(case_.createdAt).toLocaleString(),
+    cardType: "DEBIT_CARD", // Default since not available in CaseSummary
+  }));
 
-    return filtered;
-  };
-  const filteredCases = getFilteredCases();
-  // Calculate stats
-  const stats = {
-    total: highRiskCases.length,
-    inProgress: highRiskCases.filter((c) => c.status === "In Progress").length,
-    escalated: highRiskCases.filter((c) => c.status === "Escalated").length,
-    highPriorityCount: highRiskCases.filter((c) => c.priority === "high")
-      .length,
-    highPriorityPercentage:
-      (highRiskCases.filter((c) => c.priority === "high").length /
-        highRiskCases.length) *
-      100,
-  };
+  // Apply card type filter if selected
+  const filteredCases =
+    primaryFilter === "ALL"
+      ? listData
+      : listData.filter((c) => c.cardType === primaryFilter);
 
   return (
     <div className="flex min-h-screen flex-col">
-      <PageHeader title="High Priority Cases" />
+      <PageHeader title="High Risk Cases" />
       <main className="flex-1 p-6">
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
@@ -132,32 +98,10 @@ export default function HighRiskPage() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>High Priority Cases</BreadcrumbPage>
+              <BreadcrumbPage>High Risk Cases</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-
-        {/* Stats Cards */}
-
-        {/* Alert Banner */}
-        <div className="mb-6">
-          <Card className="border-red-200 bg-red-50">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="h-5 w-5 text-red-600" />
-                <div>
-                  <h4 className="font-semibold text-red-800">
-                    High Risk Alert
-                  </h4>
-                  <p className="text-sm text-red-700">
-                    {stats.escalated} cases require immediate attention. Review
-                    escalated cases first.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Filters */}
         <div className="mb-6 space-y-4">
@@ -213,7 +157,7 @@ export default function HighRiskPage() {
                 className="flex items-center gap-1"
               >
                 <ArrowUpDown className="h-4 w-4" />
-                <span>Sort by Priority</span>
+                <span>Sort</span>
               </Button>
             </div>
           </div>
@@ -223,11 +167,9 @@ export default function HighRiskPage() {
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-medium">
-              High Priority Cases ({filteredCases.length})
+              High Risk Cases ({casesData?.pagination.totalItems || 0})
             </h3>
-            {(primaryFilter !== "ALL" ||
-              statusFilter !== "ALL" ||
-              searchQuery) && (
+            {(primaryFilter !== "ALL" || statusFilter !== "ALL") && (
               <Button
                 variant="outline"
                 size="sm"
@@ -235,6 +177,7 @@ export default function HighRiskPage() {
                   setPrimaryFilter("ALL");
                   setStatusFilter("ALL");
                   setSearchQuery("");
+                  setCurrentPage(1);
                 }}
               >
                 Clear Filters
@@ -246,26 +189,51 @@ export default function HighRiskPage() {
         <CaseList cases={filteredCases} />
 
         {/* Pagination */}
-        {filteredCases.length > 0 && (
-          <div className="mt-6 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              {" "}
-              Showing {filteredCases.length} of {highRiskCases.length} high
-              priority cases
-            </p>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" disabled>
-                Previous
-              </Button>
-              <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                1
-              </Button>
-              <Button variant="outline" size="sm">
-                Next
-              </Button>
+        {casesData?.pagination?.totalPages &&
+          casesData.pagination.totalPages > 1 && (
+            <div className="mt-6 flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                Showing {(currentPage - 1) * pageSize + 1} to{" "}
+                {Math.min(
+                  currentPage * pageSize,
+                  casesData?.pagination.totalItems
+                )}{" "}
+                of {casesData?.pagination.totalItems} cases
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={currentPage === 1}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(1, prev - 1))
+                  }
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                  disabled
+                >
+                  {currentPage}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={currentPage === casesData?.pagination.totalPages}
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(casesData?.pagination.totalPages || 1, prev + 1)
+                    )
+                  }
+                >
+                  Next
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </main>
     </div>
   );
