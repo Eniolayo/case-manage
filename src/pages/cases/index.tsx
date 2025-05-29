@@ -10,6 +10,9 @@ import {
 } from "@/components/ui/select";
 import { CaseList } from "@/components/case-list";
 import { PageHeader } from "@/components/page-header";
+import { CaseListSkeleton } from "@/components/skeleton-loaders";
+import { useCases } from "@/hooks/use-api";
+import type { CaseSummary, CaseStatus } from "@/lib/api-types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,120 +22,65 @@ import {
 } from "@/components/ui/breadcrumb";
 
 type FilterType = "ALL" | "DEBIT_CARD" | "CREDIT_CARD" | "WALLET";
-type StatusFilter = "ALL" | "IN_PROGRESS" | "RESOLVED" | "ESCALATED";
+type StatusFilter = "ALL" | "NEW" | "IN_PROGRESS" | "RESOLVED" | "ESCALATED";
 
 export default function AllCasesPage() {
   const [primaryFilter, setPrimaryFilter] = useState<FilterType>("ALL");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  // Sample data for demonstration
-  const allCases: {
-    id: string;
-    entityId: string;
-    status: string;
-    priority: "high" | "low" | "medium";
-    assignee: string;
-    created: string;
-    cardType: string;
-  }[] = [
-    {
-      id: "1030",
-      entityId: "1234 56XX XXXX 0789",
-      status: "In Progress",
-      priority: "high",
-      assignee: "John Doe",
-      created: "2023-05-20 09:30",
-      cardType: "DEBIT_CARD",
-    },
-    {
-      id: "1029",
-      entityId: "5678 90XX XXXX 1234",
-      status: "Resolved",
-      priority: "medium",
-      assignee: "Jane Smith",
-      created: "2023-05-19 14:15",
-      cardType: "CREDIT_CARD",
-    },
-    {
-      id: "1028",
-      entityId: "9012 34XX XXXX 5678",
-      status: "Escalated",
-      priority: "high",
-      assignee: "Robert Johnson",
-      created: "2023-05-18 11:45",
-      cardType: "WALLET",
-    },
-    {
-      id: "1027",
-      entityId: "4567 89XX XXXX 0123",
-      status: "In Progress",
-      priority: "low",
-      assignee: "John Doe",
-      created: "2023-05-17 16:20",
-      cardType: "DEBIT_CARD",
-    },
-    {
-      id: "1026",
-      entityId: "7890 12XX XXXX 3456",
-      status: "Resolved",
-      priority: "medium",
-      assignee: "Alice Brown",
-      created: "2023-05-16 10:15",
-      cardType: "CREDIT_CARD",
-    },
-    {
-      id: "1025",
-      entityId: "2345 67XX XXXX 8901",
-      status: "In Progress",
-      priority: "high",
-      assignee: "Bob Wilson",
-      created: "2023-05-15 14:30",
-      cardType: "WALLET",
-    },
-  ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+  // API hook
+  const {
+    data: casesData,
+    isLoading,
+    error,
+  } = useCases({
+    page: currentPage,
+    pageSize,
+    status: statusFilter === "ALL" ? undefined : (statusFilter as CaseStatus),
+    search: searchQuery || undefined,
+  });
 
-  const getFilteredCases = (): {
-    id: string;
-    entityId: string;
-    status: string;
-    priority: "high" | "low" | "medium";
-    assignee: string;
-    created: string;
-    cardType: string;
-  }[] => {
-    let filtered = allCases;
+  const cases = casesData?.data || [];
+  const totalPages = Math.ceil(
+    (casesData?.pagination.totalItems || 0) / pageSize
+  );
 
-    // Apply primary filter
-    if (primaryFilter !== "ALL") {
-      filtered = filtered.filter((case_) => case_.cardType === primaryFilter);
-    }
-
-    // Apply status filter
-    if (statusFilter !== "ALL") {
-      const statusMap = {
-        IN_PROGRESS: "In Progress",
-        RESOLVED: "Resolved",
-        ESCALATED: "Escalated",
-      };
-      filtered = filtered.filter(
-        (case_) => case_.status === statusMap[statusFilter]
-      );
-    }
-
-    // Apply search filter
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (case_) =>
-          case_.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          case_.entityId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          case_.assignee.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    return filtered;
+  // Convert API cases to format expected by CaseList component
+  const convertCasesForList = () => {
+    return cases.map((case_: CaseSummary) => ({
+      id: case_.id.toString(),
+      entityId: case_.entityId.toString(),
+      status: case_.status,
+      priority: case_.priority.toLowerCase() as "high" | "medium" | "low",
+      assignee: case_.assignedTo ? `User ${case_.assignedTo}` : "Unassigned",
+      created: new Date(case_.createdAt).toLocaleString(),
+      cardType: "DEBIT_CARD", // Default since not available in summary
+    }));
   };
 
-  const filteredCases = getFilteredCases();
+  const listData = convertCasesForList();
+  if (isLoading) {
+    return <CaseListSkeleton />;
+  }
+  if (error) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <PageHeader title="All Cases" />
+        <main className="flex-1 p-6">
+          <div className="text-center py-8">
+            <p className="text-red-500">
+              Error loading cases: {error?.message || "Unknown error"}
+            </p>
+            <Button onClick={() => window.location.reload()} className="mt-4">
+              Try Again
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -149,7 +97,6 @@ export default function AllCasesPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-
         {/* Filters */}
         <div className="mb-6 space-y-4">
           <div className="flex flex-wrap items-center gap-4">
@@ -179,9 +126,10 @@ export default function AllCasesPage() {
               >
                 <SelectTrigger className="w-40">
                   <SelectValue />
-                </SelectTrigger>
+                </SelectTrigger>{" "}
                 <SelectContent>
                   <SelectItem value="ALL">All Status</SelectItem>
+                  <SelectItem value="NEW">New</SelectItem>
                   <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
                   <SelectItem value="RESOLVED">Resolved</SelectItem>
                   <SelectItem value="ESCALATED">Escalated</SelectItem>
@@ -208,13 +156,13 @@ export default function AllCasesPage() {
               </Button>
             </div>
           </div>
-        </div>
-
+        </div>{" "}
         {/* Results */}
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
+            {" "}
             <h3 className="text-lg font-medium">
-              Cases ({filteredCases.length})
+              Cases ({casesData?.pagination.totalItems || 0})
             </h3>
             {(primaryFilter !== "ALL" ||
               statusFilter !== "ALL" ||
@@ -226,6 +174,7 @@ export default function AllCasesPage() {
                   setPrimaryFilter("ALL");
                   setStatusFilter("ALL");
                   setSearchQuery("");
+                  setCurrentPage(1);
                 }}
               >
                 Clear Filters
@@ -233,32 +182,55 @@ export default function AllCasesPage() {
             )}
           </div>
         </div>
-
-        <CaseList cases={filteredCases} />
-
+        <CaseList cases={listData} />
         {/* Pagination */}
-        <div className="mt-6 flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Showing {filteredCases.length} of {allCases.length} cases
-          </p>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" disabled>
-              Previous
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-              1
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-              2
-            </Button>
-            <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-              3
-            </Button>
-            <Button variant="outline" size="sm">
-              Next
-            </Button>
+        {totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-between">
+            {" "}
+            <p className="text-sm text-muted-foreground">
+              Showing {(currentPage - 1) * pageSize + 1} to{" "}
+              {Math.min(
+                currentPage * pageSize,
+                casesData?.pagination.totalItems || 0
+              )}{" "}
+              of {casesData?.pagination.totalItems || 0} cases
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const page = i + 1;
+                return (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </Button>
+                );
+              })}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                }
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );

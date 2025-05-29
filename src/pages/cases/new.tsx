@@ -44,7 +44,6 @@ import { PageHeader } from "@/components/page-header";
 
 export default function NewCasePage() {
   const navigate = useNavigate();
-  const [caseType, setCaseType] = useState("manual");
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [voiceNote, setVoiceNote] = useState<Blob | null>(null);
@@ -174,7 +173,7 @@ export default function NewCasePage() {
 
           <h1 className="mb-6 text-2xl font-bold">Create New Case</h1>
 
-          <Tabs defaultValue="manual" onValueChange={setCaseType}>
+          <Tabs defaultValue="manual">
             <TabsList className="mb-6">
               <TabsTrigger value="manual">Manual Case</TabsTrigger>
               <TabsTrigger value="alert">From Alert Management</TabsTrigger>

@@ -15,6 +15,10 @@ import {
 import { CaseList } from "@/components/case-list";
 import { PageHeader } from "@/components/page-header";
 import { CaseCharts } from "@/components/case-charts";
+import { AlertToast } from "@/components/alert-toast";
+import { DashboardSkeleton } from "@/components/skeleton-loaders";
+import { useCases } from "@/hooks/use-api";
+import { CaseSummary, CaseStatus } from "@/lib/api-types";
 
 import { Calendar, TrendingUp, Minus, TrendingDown } from "lucide-react";
 import {
@@ -32,281 +36,110 @@ type TabType = "all" | "my" | "high-priority";
 type StatusFilter =
   | "all"
   | "high-priority"
-  | "new"
-  | "in-progress"
-  | "escalated"
-  | "resolved";
+  | "NEW"
+  | "IN_PROGRESS"
+  | "ESCALATED"
+  | "RESOLVED";
 
-// Sample data for demonstration
-type CaseStatus = "In Progress" | "Resolved" | "Escalated";
-
-type Case = {
-  id: string;
-  entityId: string;
-  status: CaseStatus;
-  score: number;
-  assignee: string;
-  created: string;
-  cardType: FilterType;
-  priority: "high" | "medium" | "low"; // Optional field for priority
-};
-
-const allCases: Case[] = [
-  {
-    id: "1050",
-    entityId: "1234 56XX XXXX 0789",
-    status: "In Progress",
-    score: 800,
-    assignee: "John Doe",
-    created: "2025-05-28 09:30",
-    cardType: "DEBIT_CARD",
-    priority: "high",
-  },
-  {
-    id: "1049",
-    entityId: "5678 90XX XXXX 1234",
-    status: "Resolved",
-    score: 450,
-    assignee: "Jane Smith",
-    created: "2025-05-27 14:15",
-    cardType: "CREDIT_CARD",
-    priority: "medium",
-  },
-  {
-    id: "1048",
-    entityId: "9012 34XX XXXX 5678",
-    status: "Escalated",
-    score: 850,
-    assignee: "Robert Johnson",
-    created: "2025-05-27 11:45",
-    cardType: "WALLET",
-    priority: "high",
-  },
-  {
-    id: "1047",
-    entityId: "4567 89XX XXXX 0123",
-    status: "In Progress",
-    score: 720,
-    assignee: "John Doe",
-    created: "2025-05-26 16:20",
-    cardType: "DEBIT_CARD",
-    priority: "medium",
-  },
-  {
-    id: "1046",
-    entityId: "7890 12XX XXXX 3456",
-    status: "Escalated",
-    score: 900,
-    assignee: "Jane Smith",
-    created: "2025-05-26 08:15",
-    cardType: "CREDIT_CARD",
-    priority: "high",
-  },
-  {
-    id: "1045",
-    entityId: "2345 67XX XXXX 8901",
-    status: "In Progress",
-    score: 650,
-    assignee: "Robert Johnson",
-    created: "2025-05-25 13:40",
-    cardType: "WALLET",
-    priority: "medium",
-  },
-  {
-    id: "1044",
-    entityId: "6789 01XX XXXX 2345",
-    status: "Resolved",
-    score: 300,
-    assignee: "John Doe",
-    created: "2025-05-25 10:25",
-    cardType: "DEBIT_CARD",
-    priority: "low",
-  },
-  {
-    id: "1043",
-    entityId: "0123 45XX XXXX 6789",
-    status: "In Progress",
-    score: 750,
-    assignee: "Jane Smith",
-    created: "2025-05-24 15:50",
-    cardType: "CREDIT_CARD",
-    priority: "medium",
-  },
-  {
-    id: "1042",
-    entityId: "3456 78XX XXXX 9012",
-    status: "Escalated",
-    score: 820,
-    assignee: "Robert Johnson",
-    created: "2025-05-23 12:10",
-    cardType: "WALLET",
-    priority: "high",
-  },
-  {
-    id: "1041",
-    entityId: "8901 23XX XXXX 4567",
-    status: "Resolved",
-    score: 400,
-    assignee: "John Doe",
-    created: "2025-05-22 09:30",
-    cardType: "DEBIT_CARD",
-    priority: "low",
-  },
-  // Additional cases for better trend visualization
-  {
-    id: "1040",
-    entityId: "1111 22XX XXXX 3333",
-    status: "In Progress",
-    score: 680,
-    assignee: "Jane Smith",
-    created: "2025-05-21 14:20",
-    cardType: "CREDIT_CARD",
-    priority: "medium",
-  },
-  {
-    id: "1039",
-    entityId: "4444 55XX XXXX 6666",
-    status: "Escalated",
-    score: 920,
-    assignee: "Robert Johnson",
-    created: "2025-05-20 11:15",
-    cardType: "WALLET",
-    priority: "high",
-  },
-  {
-    id: "1038",
-    entityId: "7777 88XX XXXX 9999",
-    status: "Resolved",
-    score: 520,
-    assignee: "John Doe",
-    created: "2025-05-19 16:45",
-    cardType: "DEBIT_CARD",
-    priority: "medium",
-  },
-  {
-    id: "1037",
-    entityId: "2222 33XX XXXX 4444",
-    status: "In Progress",
-    score: 760,
-    assignee: "Jane Smith",
-    created: "2025-05-18 10:30",
-    cardType: "CREDIT_CARD",
-    priority: "high",
-  },
-  {
-    id: "1036",
-    entityId: "5555 66XX XXXX 7777",
-    status: "Escalated",
-    score: 880,
-    assignee: "Robert Johnson",
-    created: "2025-05-17 13:20",
-    cardType: "WALLET",
-    priority: "high",
-  },
-  {
-    id: "1035",
-    entityId: "8888 99XX XXXX 0000",
-    status: "Resolved",
-    score: 350,
-    assignee: "John Doe",
-    created: "2025-05-16 09:10",
-    cardType: "DEBIT_CARD",
-    priority: "low",
-  },
-  {
-    id: "1034",
-    entityId: "3333 44XX XXXX 5555",
-    status: "In Progress",
-    score: 640,
-    assignee: "Jane Smith",
-    created: "2025-05-15 15:35",
-    cardType: "CREDIT_CARD",
-    priority: "medium",
-  },
-];
 export default function Home() {
   const [primaryFilter, setPrimaryFilter] = useState<FilterType>("ALL");
   const [activeTab, setActiveTab] = useState<TabType>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [showAlert, setShowAlert] = useState(false); // API hooks
+  const {
+    data: casesData,
+    isLoading: casesLoading,
+    error: casesError,
+  } = useCases({
+    page: 1,
+    pageSize: 20,
+    status:
+      statusFilter === "all" || statusFilter === "high-priority"
+        ? undefined
+        : (statusFilter as CaseStatus),
+    priority: statusFilter === "high-priority" ? "High" : undefined,
+  });
+
+  const cases = casesData?.data || [];
+  // Show loading skeleton while data is loading
+  if (casesLoading) {
+    return <DashboardSkeleton />;
+  }
+
+  // Show error state if there's an error
+  if (casesError) {
+    return (
+      <div className="flex flex-col">
+        <PageHeader title="Dashboard" />
+        <main className="flex-1 p-4 sm:p-6">
+          <div className="text-center py-8">
+            <p className="text-red-500">
+              Error loading cases: {casesError.message}
+            </p>
+            <Button onClick={() => window.location.reload()} className="mt-4">
+              Try Again
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
   const getFilteredCases = () => {
-    let filtered = allCases;
-
-    // Apply primary filter
-    if (primaryFilter !== "ALL") {
-      filtered = filtered.filter((case_) => case_.cardType === primaryFilter);
-    }
-
-    // Apply status filter
-    switch (statusFilter) {
-      case "high-priority":
-        filtered = filtered.filter((case_) => case_.score >= 700);
-        break;
-      case "new":
-        filtered = filtered.filter((c) => {
-          const createdDate = new Date(c.created);
-          const oneDayAgo = new Date();
-          oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-          return createdDate >= oneDayAgo;
-        });
-        break;
-      case "in-progress":
-        filtered = filtered.filter((case_) => case_.status === "In Progress");
-        break;
-      case "escalated":
-        filtered = filtered.filter((case_) => case_.status === "Escalated");
-        break;
-      case "resolved":
-        filtered = filtered.filter((case_) => case_.status === "Resolved");
-        break;
-    }
+    let filtered = cases;
 
     // Apply tab filter
     switch (activeTab) {
       case "my":
-        filtered = filtered.filter((case_) => case_.assignee === "John Doe");
+        filtered = filtered.filter(
+          (case_: CaseSummary) => case_.assignedTo === 1
+        ); // Assuming John Doe has ID 1
         break;
       case "high-priority":
-        filtered = filtered.filter((case_) => case_.score >= 700);
+        filtered = filtered.filter(
+          (case_: CaseSummary) => case_.priority === "High"
+        );
         break;
     }
 
     return filtered;
   };
-
-  const getStatsForFilter = (filter: FilterType) => {
-    const cases =
-      filter === "ALL"
-        ? allCases
-        : allCases.filter((case_) => case_.cardType === filter);
+  const getStatsForFilter = () => {
+    const filteredCases = cases;
 
     // For demo purposes, let's consider cases created within the last 24 hours as "new"
-    // In a real app, you'd compare the created date with the current date
-    const newCases = cases.filter((c) => {
-      const createdDate = new Date(c.created);
-      const oneDayAgo = new Date();
-      oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+    const oneDayAgo = new Date();
+    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+
+    const newCases = filteredCases.filter((c: CaseSummary) => {
+      const createdDate = new Date(c.createdAt);
       return createdDate >= oneDayAgo;
     });
 
     return {
-      total: cases.length,
+      total: filteredCases.length,
       new: newCases.length,
-      inProgress: cases.filter((c) => c.status === "In Progress").length,
-      resolved: cases.filter((c) => c.status === "Resolved").length,
-      escalated: cases.filter((c) => c.status === "Escalated").length,
+      inProgress: filteredCases.filter(
+        (c: CaseSummary) => c.status === "IN_PROGRESS"
+      ).length,
+      resolved: filteredCases.filter(
+        (c: CaseSummary) => c.status === "RESOLVED"
+      ).length,
+      escalated: filteredCases.filter(
+        (c: CaseSummary) => c.status === "ESCALATED"
+      ).length,
     };
   };
   const getFilterTitle = (filter: StatusFilter) => {
     switch (filter) {
       case "high-priority":
         return "High Priority Cases";
-      case "new":
+      case "NEW":
         return "New Cases";
-      case "in-progress":
+      case "IN_PROGRESS":
         return "In Progress Cases";
-      case "escalated":
+      case "ESCALATED":
         return "Escalated Cases";
-      case "resolved":
+      case "RESOLVED":
         return "Resolved Cases";
       default:
         return "Recent Cases";
@@ -316,10 +149,41 @@ export default function Home() {
   const handleCardClick = (status: StatusFilter) => {
     // Toggle filter: if clicking the same card, reset to "all", otherwise set new filter
     setStatusFilter(statusFilter === status ? "all" : status);
+  }; // Convert API cases to format expected by CaseCharts component
+  const convertCasesForCharts = (apiCases: CaseSummary[]) => {
+    return apiCases.map((case_) => ({
+      id: case_.id.toString(),
+      entityId: case_.entityId.toString(),
+      status:
+        case_.status === "IN_PROGRESS"
+          ? ("In Progress" as const)
+          : case_.status === "RESOLVED"
+          ? ("Resolved" as const)
+          : case_.status === "ESCALATED"
+          ? ("Escalated" as const)
+          : ("In Progress" as const),
+      score: 500, // Default score since not available in CaseSummary
+      assignee: case_.assignedTo ? `User ${case_.assignedTo}` : "Unassigned",
+      created: new Date(case_.createdAt).toISOString().split("T")[0], // Convert to YYYY-MM-DD format for charts
+      cardType: "ALL" as FilterType, // Default since not available in CaseSummary
+      priority: case_.priority.toLowerCase() as "high" | "medium" | "low",
+    }));
+  }; // Convert API cases to format expected by CaseList component
+  const convertCasesForList = (apiCases: CaseSummary[]) => {
+    return apiCases.map((case_) => ({
+      id: case_.id.toString(),
+      entityId: case_.entityId.toString(),
+      status: case_.status,
+      priority: case_.priority.toLowerCase() as "high" | "medium" | "low",
+      assignee: case_.assignedTo ? `User ${case_.assignedTo}` : "Unassigned",
+      created: new Date(case_.createdAt).toLocaleString(),
+      cardType: "ALL", // Default since not available in CaseSummary
+    }));
   };
-
-  const stats = getStatsForFilter(primaryFilter);
+  const stats = getStatsForFilter();
   const filteredCases = getFilteredCases();
+  const chartsData = convertCasesForCharts(filteredCases);
+  const listData = convertCasesForList(filteredCases);
 
   return (
     <div className="flex  flex-col">
@@ -382,19 +246,19 @@ export default function Home() {
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuLabel className="text-xs text-muted-foreground">
-                      Risk Score
+                      Case Prority
                     </DropdownMenuLabel>
                     <DropdownMenuItem>
                       <TrendingUp className="mr-2 h-4 w-4" />
-                      High Risk (700+)
+                      High
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <Minus className="mr-2 h-4 w-4" />
-                      Medium Risk (400-699)
+                      Medium
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <TrendingDown className="mr-2 h-4 w-4" />
-                      Low Risk (0-399)
+                      Low
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
@@ -425,10 +289,14 @@ export default function Home() {
                   <div className="flex flex-col gap-2">
                     <p className="text-sm text-muted-foreground">
                       High Priority
-                    </p>
+                    </p>{" "}
                     <div className="flex items-center justify-between">
                       <p className="text-2xl font-bold">
-                        {allCases.filter((c) => c.score >= 700).length}
+                        {
+                          cases.filter(
+                            (c: CaseSummary) => c.priority === "High"
+                          ).length
+                        }
                       </p>
                       <Badge
                         variant="outline"
@@ -457,11 +325,11 @@ export default function Home() {
               </Card>{" "}
               <Card
                 className={`cursor-pointer transition-colors hover:bg-muted/50 ${
-                  statusFilter === "new"
+                  statusFilter === "NEW"
                     ? "ring-2 ring-blue-500 bg-blue-50"
                     : ""
                 }`}
-                onClick={() => handleCardClick("new")}
+                onClick={() => handleCardClick("NEW")}
               >
                 <CardContent className="p-4">
                   <div className="flex flex-col gap-2">
@@ -496,11 +364,11 @@ export default function Home() {
               </Card>{" "}
               <Card
                 className={`cursor-pointer transition-colors hover:bg-muted/50 ${
-                  statusFilter === "in-progress"
+                  statusFilter === "IN_PROGRESS"
                     ? "ring-2 ring-yellow-500 bg-yellow-50"
                     : ""
                 }`}
-                onClick={() => handleCardClick("in-progress")}
+                onClick={() => handleCardClick("IN_PROGRESS")}
               >
                 <CardContent className="p-4">
                   <div className="flex flex-col gap-2">
@@ -534,11 +402,11 @@ export default function Home() {
               </Card>{" "}
               <Card
                 className={`cursor-pointer transition-colors hover:bg-muted/50 ${
-                  statusFilter === "escalated"
+                  statusFilter === "ESCALATED"
                     ? "ring-2 ring-red-500 bg-red-50"
                     : ""
                 }`}
-                onClick={() => handleCardClick("escalated")}
+                onClick={() => handleCardClick("ESCALATED")}
               >
                 <CardContent className="p-4">
                   <div className="flex flex-col gap-2">
@@ -572,11 +440,11 @@ export default function Home() {
               </Card>{" "}
               <Card
                 className={`cursor-pointer transition-colors hover:bg-muted/50 ${
-                  statusFilter === "resolved"
+                  statusFilter === "RESOLVED"
                     ? "ring-2 ring-green-500 bg-green-50"
                     : ""
                 }`}
-                onClick={() => handleCardClick("resolved")}
+                onClick={() => handleCardClick("RESOLVED")}
               >
                 <CardContent className="p-4">
                   <div className="flex flex-col gap-2">
@@ -615,7 +483,7 @@ export default function Home() {
               <h3 className="text-lg sm:text-xl font-bold mb-4">
                 Analytics Overview
               </h3>
-              <CaseCharts cases={filteredCases} primaryFilter={primaryFilter} />
+              <CaseCharts cases={chartsData} primaryFilter={primaryFilter} />
             </div>
 
             <div className="mt-8">
@@ -639,7 +507,7 @@ export default function Home() {
                   </Button>
                 </Link>
               </div>
-              <CaseList cases={filteredCases} />
+              <CaseList cases={listData} />
 
               <div className="mt-4 flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
                 <div className="flex items-center gap-2">
@@ -662,8 +530,54 @@ export default function Home() {
               </div>
             </div>
           </TabsContent>
-        </Tabs>
+        </Tabs>{" "}
       </main>
+      <div className="flex justify-center p-4">
+        <Button
+          onClick={() => setShowAlert(true)}
+          variant="outline"
+          className="flex items-center gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          Simulate Alert Toast
+        </Button>
+      </div>
+
+      {showAlert && (
+        <AlertToast
+          alert={{
+            id: "alert-1",
+            title: "Suspicious transaction detected on card ending with 0789",
+            riskLevel: "High" as const,
+            severity: "High" as const,
+            amount: "$1,299.00",
+            status: "Active" as const,
+            timestamp: new Date().toISOString(),
+            description: "Multiple transactions from unusual location",
+            category: "Transaction Fraud",
+            isNew: true,
+          }}
+          onClose={() => setShowAlert(false)}
+          onView={() => {
+            setShowAlert(false);
+            // In a real app, you'd navigate to the case detail page
+            console.log("View case details");
+          }}
+        />
+      )}
     </div>
   );
 }

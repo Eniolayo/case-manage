@@ -46,13 +46,13 @@ const navigation = [
     name: "My Cases",
     href: "/my-cases",
     icon: FileText,
-    badge: "2",
+    badge: "3",
   },
   {
     name: "High Risk",
     href: "/high-risk",
     icon: AlertTriangle,
-    badge: "3",
+    badge: "4",
   },
   {
     name: "All Cases",

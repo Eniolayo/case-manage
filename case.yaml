@@ -1,0 +1,890 @@
+openapi: 3.0.3
+info:
+  title: FRM Case Management API
+  description: |
+    API for managing FRM cases, investigations, and related operations.
+    This API provides endpoints for creating, updating, and managing fraud cases,
+    including case status updates, evidence management, and investigation workflows.
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@fraudmonitoring.com
+
+servers:
+  - url: https://api.frm.com/v1
+    description: Production server
+  - url: https://staging-api.frm.com/v1
+    description: Staging server
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT token for API authentication. Include the token in the Authorization header
+        as 'Bearer <token>'
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code for programmatic handling
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: object
+          description: Additional error details if available
+      required:
+        - code
+        - message
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number
+          minimum: 1
+        pageSize:
+          type: integer
+          description: Number of items per page
+          minimum: 1
+          maximum: 100
+        totalItems:
+          type: integer
+          description: Total number of items
+        totalPages:
+          type: integer
+          description: Total number of pages
+
+    CaseSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique case identifier
+        entityId:
+          type: integer
+          format: int64
+          description: Unique identifier of the associated entity
+        customerId:
+          type: integer
+          format: int64
+          description: Unique identifier of the associated customer
+        status:
+          type: string
+          enum: [NEW, IN_PROGRESS, RESOLVED, ESCALATED, CLOSED]
+          description: Current status of the case
+        priority:
+          type: string
+          enum: [High, Medium, Low]
+          description: Priority level of the case
+        assignedTo:
+          type: integer
+          format: int64
+          description: Identifier of the user assigned to the case
+        createdAt:
+          type: integer
+          format: int64
+          description: Unix timestamp of case creation
+        updatedAt:
+          type: integer
+          format: int64
+          description: Unix timestamp of last case update
+      required:
+        - id
+        - entityId
+        - status
+        - priority
+        - createdAt
+        - updatedAt
+
+    CaseListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CaseSummary"
+          description: List of case summaries
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+      required:
+        - data
+        - pagination
+
+    CaseStatusSummary:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [NEW, IN_PROGRESS, RESOLVED, ESCALATED, CLOSED]
+          description: Case status
+        count:
+          type: integer
+          minimum: 0
+          description: Total number of cases in this status
+        growthPercent:
+          type: number
+          format: float
+          description: Percentage growth in the last 24 hours
+      required:
+        - status
+        - count
+        - growthPercent
+
+    CaseSummaryResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CaseStatusSummary"
+          description: Summary for each status
+        totalCases:
+          type: integer
+          minimum: 0
+          description: Total number of cases across all statuses
+        lastUpdated:
+          type: integer
+          format: int64
+          description: Unix timestamp when the summary was last calculated
+      required:
+        - data
+        - totalCases
+        - lastUpdated
+
+    TransactionMiniSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique transaction identifier
+        createdAt:
+          type: integer
+          format: int64
+          description: Unix timestamp of transaction creation
+      required:
+        - id
+        - createdAt
+
+    CaseDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique case identifier
+        entityId:
+          type: integer
+          format: int64
+          description: Unique identifier of the associated entity
+        customerId:
+          type: integer
+          format: int64
+          description: Unique identifier of the associated customer
+        parentAlertId:
+          type: integer
+          format: int64
+          description: Identifier of the parent alert that triggered this case
+        status:
+          type: string
+          enum: [NEW, IN_PROGRESS, RESOLVED, ESCALATED, CLOSED]
+          description: Current status of the case
+        priority:
+          type: string
+          enum: [High, Medium, Low]
+          description: Priority level of the case
+        assignedTo:
+          type: integer
+          format: int64
+          description: Identifier of the user assigned to the case
+        age:
+          type: string
+          description: Age of the case (e.g., "2 days", "1 week")
+        resolutionType:
+          type: string
+          description: Type of resolution if case is resolved
+        linkedCases:
+          type: array
+          description: Array of linked case identifiers
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                description: Unique identifier of the linked case
+              linkedAt:
+                type: integer
+                format: int64
+                description: Unix timestamp when the case was linked
+            required:
+              - id
+              - linkedAt
+        createdAt:
+          type: integer
+          format: int64
+          description: Unix timestamp of case creation
+        updatedAt:
+          type: integer
+          format: int64
+          description: Unix timestamp of last case update
+      required:
+        - id
+        - entityId
+        - parentAlertId
+        - status
+        - priority
+        - assignedTo
+        - age
+        - linkedCases
+        - createdAt
+        - updatedAt
+
+    CommentHeader:
+      type: string
+      enum: [Investigation, Customer Contact, Resolution, Note]
+      description: Type of the comment
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier of the comment
+        authorId:
+          type: integer
+          format: int64
+          description: Unique identifier of the comment author
+        header:
+          $ref: "#/components/schemas/CommentHeader"
+        content:
+          type: string
+          description: Content of the comment
+        createdAt:
+          type: integer
+          format: int64
+          description: Unix timestamp of comment creation
+        updatedAt:
+          type: integer
+          format: int64
+          description: Unix timestamp of last comment update
+      required:
+        - id
+        - authorId
+        - header
+        - content
+        - createdAt
+        - updatedAt
+
+    CommentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
+          description: List of comments
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+      required:
+        - data
+        - pagination
+
+    CreateCommentRequest:
+      type: object
+      properties:
+        header:
+          $ref: "#/components/schemas/CommentHeader"
+        content:
+          type: string
+          description: Content of the comment
+      required:
+        - header
+        - content
+
+    UpdateCommentRequest:
+      type: object
+      properties:
+        header:
+          $ref: "#/components/schemas/CommentHeader"
+        content:
+          type: string
+          description: Content of the comment
+      required:
+        - header
+        - content
+
+    Alert:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier of the alert
+        transactionId:
+          type: integer
+          format: int64
+          description: Unique identifier of the associated transaction
+        anomalies:
+          type: array
+          description: List of anomalies detected in the transaction
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+                description: Unique identifier of the anomaly
+              title:
+                type: string
+                description: Title of the anomaly
+              description:
+                type: string
+                description: Detailed description of the anomaly
+              expression:
+                type: string
+                description: Rule expression that triggered the anomaly
+            required:
+              - id
+              - title
+              - description
+              - expression
+        payload:
+          type: object
+          description: Transaction payload data
+          additionalProperties: true
+        caseStatus:
+          type: string
+          enum: [REQUIRED, NOT_REQUIRED]
+          description: Status indicating whether a case is required
+        createdAt:
+          type: integer
+          format: int64
+          description: Unix timestamp of alert creation
+      required:
+        - id
+        - transactionId
+        - anomalies
+        - payload
+        - caseStatus
+        - createdAt
+
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier of the customer
+        name:
+          type: string
+          description: Full name of the customer
+        email:
+          type: string
+          format: email
+          description: Email address of the customer
+        dob:
+          type: string
+          pattern: '^\d{2}-\d{2}-\d{4}$'
+          description: Date of birth in dd-mm-yyyy format
+        phoneNumber:
+          type: string
+          description: Phone number of the customer
+        accountId:
+          type: integer
+          format: int64
+          description: Associated account identifier
+        createdAt:
+          type: integer
+          format: int64
+          description: Unix timestamp of customer creation
+        updatedAt:
+          type: integer
+          format: int64
+          description: Unix timestamp of last customer update
+      required:
+        - id
+        - name
+        - email
+        - dob
+        - phoneNumber
+        - accountId
+        - createdAt
+        - updatedAt
+
+tags:
+  - name: Cases
+    description: Operations related to fraud case management
+  - name: Alerts
+    description: Operations related to fraud alerts
+  - name: Customers
+    description: Operations related to customer management
+
+# Paths will be added here
+paths:
+  /cases:
+    get:
+      summary: List cases
+      description: |
+        Retrieve a paginated list of cases with summary information.
+        Results can be filtered by various parameters and sorted by different fields.
+      tags:
+        - Cases
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: status
+          in: query
+          description: Filter cases by status
+          schema:
+            type: string
+            enum: [NEW, IN_PROGRESS, RESOLVED, ESCALATED, CLOSED]
+        - name: priority
+          in: query
+          description: Filter cases by priority
+          schema:
+            type: string
+            enum: [High, Medium, Low]
+        - name: search
+          in: query
+          description: |
+            Search query to filter cases. Can search by:
+            - Case ID (exact match)
+            - Entity ID (exact match)
+            - Assigned user ID (exact match)
+          schema:
+            type: string
+            pattern: "^[0-9a-fA-F-]+$"
+            description: UUID format for exact matches
+        - name: createdFrom
+          in: query
+          description: Filter cases created after this timestamp (inclusive)
+          schema:
+            type: integer
+            format: int64
+            description: Unix timestamp in seconds
+        - name: createdTo
+          in: query
+          description: Filter cases created before this timestamp (inclusive)
+          schema:
+            type: integer
+            format: int64
+            description: Unix timestamp in seconds
+        - name: sortBy
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+            enum: [createdAt, updatedAt]
+            default: createdAt
+        - name: sortOrder
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        "200":
+          description: Successfully retrieved list of cases
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseListResponse"
+        "400":
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /cases/summary:
+    get:
+      summary: Get case statistics summary
+      description: |
+        Retrieve a summary of case statistics including total counts and growth rates
+        for each status. The summary includes the total number of cases and their
+        growth percentage in the last 24 hours.
+      tags:
+        - Cases
+      responses:
+        "200":
+          description: Successfully retrieved case statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseSummaryResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /cases/{id}:
+    get:
+      summary: Get case details
+      description: |
+        Retrieve detailed information about a specific case including its associated transactions.
+      tags:
+        - Cases
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Case identifier
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Successfully retrieved case details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseDetail"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Case not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /cases/{id}/comments:
+    get:
+      summary: List case comments
+      description: |
+        Retrieve a paginated list of comments for a specific case.
+      tags:
+        - Cases
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Case identifier
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        "200":
+          description: Successfully retrieved comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommentListResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Case not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a new comment
+      description: |
+        Add a new comment to a specific case.
+      tags:
+        - Cases
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Case identifier
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentRequest"
+      responses:
+        "201":
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Case not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /cases/{caseId}/comments/{commentId}:
+    get:
+      summary: Get comment details
+      description: |
+        Retrieve details of a specific comment.
+      tags:
+        - Cases
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          description: Case identifier
+          schema:
+            type: integer
+            format: int64
+        - name: commentId
+          in: path
+          required: true
+          description: Comment identifier
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Successfully retrieved comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Case or comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Update comment
+      description: |
+        Update an existing comment.
+      tags:
+        - Cases
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          description: Case identifier
+          schema:
+            type: integer
+            format: int64
+        - name: commentId
+          in: path
+          required: true
+          description: Comment identifier
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCommentRequest"
+      responses:
+        "200":
+          description: Comment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Case or comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /customers/{id}:
+    get:
+      summary: Get customer details
+      description: |
+        Retrieve detailed information about a specific customer.
+      tags:
+        - Customers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Customer identifier
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Successfully retrieved customer details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /alerts/{id}:
+    get:
+      summary: Get alert details
+      description: |
+        Retrieve detailed information about a specific alert.
+      tags:
+        - Alerts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Alert identifier
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Successfully retrieved alert details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alert"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Alert not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"

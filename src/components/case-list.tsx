@@ -23,9 +23,10 @@ type Case = {
 
 type CaseListProps = {
   cases: Case[];
+  showAssignToMe?: boolean;
 };
 
-export function CaseList({ cases }: CaseListProps) {
+export function CaseList({ cases, showAssignToMe = true }: CaseListProps) {
   return (
     <div className="rounded-lg border overflow-x-auto w-full">
       <table className="w-full">
@@ -98,7 +99,9 @@ export function CaseList({ cases }: CaseListProps) {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>Assign to me</DropdownMenuItem>
+                      {showAssignToMe && (
+                        <DropdownMenuItem>Assign to me</DropdownMenuItem>
+                      )}
                       <DropdownMenuItem>Forward case</DropdownMenuItem>
                       <DropdownMenuItem>Export details</DropdownMenuItem>
                     </DropdownMenuContent>

@@ -51,6 +51,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { PageHeader } from "@/components/page-header";
+import { CaseDetailSkeleton } from "@/components/skeleton-loaders";
+import {
+  useCase,
+  useCaseComments,
+  useCreateComment,
+  useCustomer,
+} from "@/hooks/use-api";
+import type { Comment, LinkedCase } from "@/lib/api-types";
 
 type Transaction = {
   id: string;
@@ -66,16 +74,31 @@ type Transaction = {
 };
 export default function CaseDetailPage() {
   const params = useParams();
+  const caseId = params.id ? parseInt(params.id, 10) : 0; // API hooks
+  const {
+    data: caseData,
+    isLoading: caseLoading,
+    error: caseError,
+  } = useCase(caseId);
+  const { data: commentsData, isLoading: commentsLoading } = useCaseComments(
+    caseId,
+    { page: 1, pageSize: 50 }
+  );
+  const createCommentMutation = useCreateComment(caseId);
+  const isSubmittingComment = createCommentMutation.isPending;
+  const { data: customerData, isLoading: customerLoading } = useCustomer(
+    caseData?.customerId || 0
+  );
+  console.log("Case Data:", caseData, "Comments Data:", commentsData);
+  console.log("Customer Data:", customerData);
 
-  const [commentTab, setCommentTab] = useState("comments");
   const [showForwardDialog, setShowForwardDialog] = useState(false);
   const [comment, setComment] = useState("");
   const [commentHeader, setCommentHeader] = useState("");
-  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [showPhoneNumber, setShowPhoneNumber] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
-  const [voiceNoteTranscription, setVoiceNoteTranscription] = useState(
+  const [voiceNoteTranscription] = useState(
     "This is a simulated transcription of the case voice note. The customer is reporting suspicious transactions on their card that they did not authorize."
   );
   // Voice note states
@@ -92,17 +115,42 @@ export default function CaseDetailPage() {
       }
     };
   }, []);
-  const handleAddComment = () => {
+  // Show loading skeleton while data is loading
+  if (caseLoading || commentsLoading || customerLoading) {
+    return <CaseDetailSkeleton />;
+  }
+
+  // Show error state if there's an error
+  if (caseError || !caseData) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <PageHeader title="Case Details" />
+        <main className="flex-1 p-6">
+          <div className="text-center py-8">
+            <p className="text-red-500">
+              Error loading case: {caseError?.message || "Case not found"}
+            </p>
+            <Button onClick={() => window.location.reload()} className="mt-4">
+              Try Again
+            </Button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+  const handleAddComment = async () => {
     if (!comment.trim() || !commentHeader) return;
 
-    setIsSubmittingComment(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmittingComment(false);
+    try {
+      await createCommentMutation.mutateAsync({
+        content: comment,
+        header: commentHeader as any,
+      });
       setComment("");
       setCommentHeader("");
-      // In a real app, you would update the comments list here
-    }, 1000);
+    } catch (error) {
+      console.error("Failed to add comment:", error);
+    }
   };
   // Voice note functions
   const handleVoiceNotePlay = () => {
@@ -139,9 +187,9 @@ export default function CaseDetailPage() {
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
-
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
+      case "in_progress":
       case "in-progress":
         return (
           <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
@@ -160,22 +208,39 @@ export default function CaseDetailPage() {
             Escalated
           </Badge>
         );
+      case "new":
+        return (
+          <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+            New
+          </Badge>
+        );
+      case "closed":
+        return (
+          <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">
+            Closed
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-
   const formatPhoneNumber = (phone: string, masked: boolean) => {
     if (masked) {
-      return "+91-XXXXX-43210";
+      // Show first 3 and last 5 digits, mask the middle
+      const cleaned = phone.replace(/\D/g, "");
+      if (cleaned.length >= 8) {
+        const start = cleaned.slice(0, 3);
+        const end = cleaned.slice(-5);
+        return `+${start}-XXXXX-${end}`;
+      }
+      return "XXX-XXXXX-XXXXX";
     }
-    return "+91-98765-43210";
+    return phone;
   };
 
   return (
     <div className="min-h-screen">
-      <PageHeader title="Case Details" />
-
+      <PageHeader title="Case Details" />{" "}
       <div className=" flex flex-col items-start justify-between gap-4 px-4 py-4 sm:flex-row sm:items-center">
         <div>
           <Breadcrumb className="mb-2">
@@ -185,11 +250,13 @@ export default function CaseDetailPage() {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Case {params.id}</BreadcrumbPage>
+                <BreadcrumbPage>Case {caseData.id}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <h1 className="text-2xl font-bold">Case Details</h1>
+          <h1 className="text-2xl font-bold">
+            Case {caseData.id} - {customerData?.name || "Loading..."}
+          </h1>
         </div>
         <div className="flex flex-wrap gap-2">
           <Dialog open={showForwardDialog} onOpenChange={setShowForwardDialog}>
@@ -244,7 +311,6 @@ export default function CaseDetailPage() {
           </Dialog>
         </div>
       </div>
-
       <main className=" flex-1 px-4 pb-8">
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
@@ -277,8 +343,18 @@ export default function CaseDetailPage() {
                       Case Priority
                     </Label>
                     <div className="flex items-center gap-1">
-                      <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
-                        High
+                      {" "}
+                      <Badge
+                        className={`${
+                          caseData.priority === "High"
+                            ? "bg-red-100 text-red-800 hover:bg-red-100"
+                            : caseData.priority === "Medium"
+                            ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                            : "bg-green-100 text-green-800 hover:bg-green-100"
+                        }`}
+                      >
+                        {caseData.priority.charAt(0).toUpperCase() +
+                          caseData.priority.slice(1)}
                       </Badge>
                     </div>
                   </div>
@@ -286,7 +362,9 @@ export default function CaseDetailPage() {
                     <Label className="text-xs text-muted-foreground">
                       Assignee
                     </Label>
-                    <p className="font-medium">John Doe</p>
+                    <p className="font-medium">
+                      {caseData.assignedTo || "Unassigned"}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">
@@ -294,15 +372,21 @@ export default function CaseDetailPage() {
                     </Label>
                     <div className="flex items-center gap-1">
                       <p className="font-medium">
-                        May 20, 2023 <br /> 09:30 AM
+                        {new Date(caseData.createdAt).toLocaleDateString()}{" "}
+                        <br />
+                        {new Date(caseData.createdAt).toLocaleTimeString()}
                       </p>
                     </div>
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">
                       Resolution Datetime
-                    </Label>
-                    <p className="font-medium">-</p>
+                    </Label>{" "}
+                    <p className="font-medium">
+                      {caseData.status === "RESOLVED"
+                        ? new Date(caseData.updatedAt).toLocaleDateString()
+                        : "-"}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">
@@ -661,7 +745,7 @@ export default function CaseDetailPage() {
             </Card>
             <Card>
               <CardContent className="p-0">
-                <Tabs defaultValue="comments" onValueChange={setCommentTab}>
+                <Tabs defaultValue="comments">
                   <div className="border-b px-0 ">
                     <TabsList className="border-0 p-0">
                       <TabsTrigger
@@ -677,8 +761,7 @@ export default function CaseDetailPage() {
                         Audit History
                       </TabsTrigger>
                     </TabsList>
-                  </div>
-
+                  </div>{" "}
                   <TabsContent value="comments" className="p-0">
                     <div className="overflow-x-auto h-[300px]">
                       <table className="w-full relative">
@@ -699,55 +782,50 @@ export default function CaseDetailPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          <tr className="border-b">
-                            <td className="px-4 py-3 text-sm">
-                              2023-05-20 09:35
-                            </td>
-                            <td className="px-4 py-3 text-sm">john.doe</td>
-                            <td className="px-4 py-3 text-sm whitespace-nowrap">
-                              <Badge variant="outline" className="bg-blue-50">
-                                Investigation
-                              </Badge>
-                            </td>
-                            <td className="px-4 py-3 text-sm">
-                              Case opened for investigation due to suspicious
-                              transaction pattern.
-                            </td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="px-4 py-3 text-sm">
-                              2023-05-21 11:20
-                            </td>
-                            <td className="px-4 py-3 text-sm">john.doe</td>
-                            <td className="px-4 py-3 text-sm whitespace-nowrap">
-                              <Badge variant="outline" className="bg-purple-50">
-                                Customer Contact
-                              </Badge>
-                            </td>
-                            <td className="px-4 py-3 text-sm">
-                              Attempted to contact customer. No response.
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-3 text-sm">
-                              2023-05-22 14:45
-                            </td>
-                            <td className="px-4 py-3 text-sm">jane.smith</td>
-                            <td className="px-4 py-3 text-sm whitespace-nowrap">
-                              <Badge variant="outline" className="bg-purple-50">
-                                Customer Contact
-                              </Badge>
-                            </td>
-                            <td className="px-4 py-3 text-sm">
-                              Customer contacted. They confirmed they did not
-                              authorize the transaction.
-                            </td>
-                          </tr>
+                          {commentsData?.data?.map((comment: Comment) => (
+                            <tr key={comment.id} className="border-b">
+                              <td className="px-4 py-3 text-sm">
+                                {new Date(comment.createdAt).toLocaleString()}
+                              </td>
+                              <td className="px-4 py-3 text-sm">
+                                user.{comment.authorId}
+                              </td>
+                              <td className="px-4 py-3 text-sm whitespace-nowrap">
+                                <Badge
+                                  variant="outline"
+                                  className={
+                                    comment.header === "Investigation"
+                                      ? "bg-blue-50"
+                                      : comment.header === "Customer Contact"
+                                      ? "bg-purple-50"
+                                      : comment.header === "Resolution"
+                                      ? "bg-green-50"
+                                      : "bg-gray-50"
+                                  }
+                                >
+                                  {comment.header}
+                                </Badge>
+                              </td>
+                              <td className="px-4 py-3 text-sm">
+                                {comment.content}
+                              </td>
+                            </tr>
+                          )) || (
+                            <tr>
+                              <td
+                                colSpan={4}
+                                className="px-4 py-8 text-center text-muted-foreground"
+                              >
+                                {commentsLoading
+                                  ? "Loading comments..."
+                                  : "No comments available"}
+                              </td>
+                            </tr>
+                          )}
                         </tbody>
                       </table>
                     </div>
                   </TabsContent>
-
                   <TabsContent value="audit" className="p-0">
                     <div className="overflow-auto h-[300px]">
                       <table className="w-full relative">
@@ -807,6 +885,7 @@ export default function CaseDetailPage() {
           </div>
 
           <div className="space-y-6">
+            {" "}
             <Card>
               <CardContent className="p-6">
                 <h3 className="mb-4 text-lg font-medium">Customer Details</h3>
@@ -815,7 +894,9 @@ export default function CaseDetailPage() {
                     <Label className="text-xs text-muted-foreground">
                       Customer Name
                     </Label>
-                    <p className="font-medium">John Customer</p>
+                    <p className="font-medium">
+                      {customerData?.name || "Loading..."}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">
@@ -823,13 +904,19 @@ export default function CaseDetailPage() {
                     </Label>
                     <div className="flex items-center gap-2">
                       <p className="font-medium">
-                        {formatPhoneNumber("+91-98765-43210", !showPhoneNumber)}
+                        {customerData
+                          ? formatPhoneNumber(
+                              customerData.phoneNumber,
+                              !showPhoneNumber
+                            )
+                          : "Loading..."}
                       </p>
                       <Button
                         variant="ghost"
                         size="sm"
                         className="h-6 w-6 p-0"
                         onClick={() => setShowPhoneNumber(!showPhoneNumber)}
+                        disabled={!customerData}
                       >
                         {showPhoneNumber ? (
                           <EyeOff className="h-3 w-3" />
@@ -846,25 +933,33 @@ export default function CaseDetailPage() {
                     <Label className="text-xs text-muted-foreground">
                       Customer ID
                     </Label>
-                    <p className="font-medium">CUST123456</p>
+                    <p className="font-medium">
+                      {customerData?.id || "Loading..."}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">
                       Account ID
                     </Label>
-                    <p className="font-medium">ACCT987654</p>
+                    <p className="font-medium">
+                      {customerData?.accountId || "Loading..."}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">
-                      Card Issue Date
+                      Email
                     </Label>
-                    <p className="font-medium">2022-03-15</p>
+                    <p className="font-medium">
+                      {customerData?.email || "Loading..."}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">
-                      Father's Name
+                      Date of Birth
                     </Label>
-                    <p className="font-medium">Robert Customer</p>
+                    <p className="font-medium">
+                      {customerData?.dob || "Loading..."}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">
@@ -884,8 +979,7 @@ export default function CaseDetailPage() {
                   </div>
                 </div>
               </CardContent>
-            </Card>
-
+            </Card>{" "}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between px-6 py-4">
                 <CardTitle className="text-base font-medium">
@@ -902,44 +996,36 @@ export default function CaseDetailPage() {
               </CardHeader>
               <CardContent className="p-6 pt-0">
                 <div className="space-y-3">
-                  <Link
-                    to="/cases/1025"
-                    className="block rounded-lg border p-3 transition-colors hover:bg-muted/50"
-                  >
-                    <div className="flex justify-between">
-                      <span className="font-medium">Case - 1025</span>
-                      <Badge variant="outline" className="bg-green-50">
-                        Resolved
-                      </Badge>
+                  {caseData?.linkedCases?.length ? (
+                    caseData.linkedCases.map((linkedCase: LinkedCase) => (
+                      <Link
+                        key={linkedCase.id}
+                        to={`/cases/${linkedCase.id}`}
+                        className="block rounded-lg border p-3 transition-colors hover:bg-muted/50"
+                      >
+                        <div className="flex justify-between">
+                          <span className="font-medium">
+                            Case - {linkedCase.id}
+                          </span>
+                          <Badge variant="outline" className="bg-green-50">
+                            Linked
+                          </Badge>
+                        </div>
+                        <div className="mt-1 flex items-center justify-between">
+                          <p className="text-sm text-muted-foreground">
+                            Related fraud investigation
+                          </p>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(linkedCase.linkedAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="text-center py-4 text-muted-foreground">
+                      No linked cases
                     </div>
-                    <div className="mt-1 flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">
-                        Previous fraud investigation
-                      </p>
-                      <span className="text-xs text-muted-foreground">
-                        2023-05-15
-                      </span>
-                    </div>
-                  </Link>
-                  <Link
-                    to="/cases/1020"
-                    className="block rounded-lg border p-3 transition-colors hover:bg-muted/50"
-                  >
-                    <div className="flex justify-between">
-                      <span className="font-medium">Case - 1020</span>
-                      <Badge variant="outline" className="bg-green-50">
-                        Resolved
-                      </Badge>
-                    </div>
-                    <div className="mt-1 flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">
-                        Card replacement request
-                      </p>
-                      <span className="text-xs text-muted-foreground">
-                        2023-05-10
-                      </span>
-                    </div>
-                  </Link>
+                  )}
                 </div>
                 <div className="mt-4">
                   <Link to={`/cases/${params.id}/linked`}>
@@ -950,7 +1036,6 @@ export default function CaseDetailPage() {
                 </div>
               </CardContent>
             </Card>
-
             <Card>
               <CardHeader className="px-6 py-4">
                 <CardTitle className="text-base font-medium">
