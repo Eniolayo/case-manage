@@ -150,3 +150,51 @@ export interface CommentListParams {
   page?: number;
   pageSize?: number;
 }
+
+export interface TransactionDetail {
+  account_balance: number;
+  account_id: string;
+  account_type: string;
+  acquiring_bankname: string;
+  acquiring_country: string;
+  card_masked: boolean;
+  card_number: string;
+  card_type: string;
+  count_txn_id_1d: number;
+  counter_partyid: string;
+  courier_fingerprint: string;
+  courierid: string;
+  customer_fingerprint: string;
+  customer_id: string;
+  customer_name: string;
+  device_appcloned: boolean;
+  device_id: string;
+  device_ip: string;
+  device_iplocation: string;
+  device_mockgps: boolean;
+  device_vpnactive: boolean;
+  event_type: string;
+  issuing_bankname: string;
+  issuing_country: string;
+  merchant_addresscity: string;
+  merchant_addresscountry: string;
+  merchant_addressdistrict: string;
+  merchant_addressline1: string;
+  merchant_addresslocality: string;
+  merchant_addresspostalcode: string;
+  merchant_addressstate: string;
+}
+
+export interface Transaction {
+  id: string;
+  amount: number;
+  currencyCode: string;
+  status: string;
+  type: string;
+  fraudSeverity: "High" | "Medium" | "Low";
+  scenarioName: string;
+  channel: "POS" | "ATM" | "Online" | "Mobile";
+  country: string;
+  createdAt: number;
+  details: TransactionDetail;
+}

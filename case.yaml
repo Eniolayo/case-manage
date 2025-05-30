@@ -331,12 +331,10 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
           description: Unique identifier of the alert
         transactionId:
-          type: integer
-          format: int64
+          type: string
           description: Unique identifier of the associated transaction
         anomalies:
           type: array
@@ -345,8 +343,7 @@ components:
             type: object
             properties:
               id:
-                type: integer
-                format: int64
+                type: string
                 description: Unique identifier of the anomaly
               title:
                 type: string
@@ -365,7 +362,202 @@ components:
         payload:
           type: object
           description: Transaction payload data
-          additionalProperties: true
+          properties:
+            data:
+              type: object
+              properties:
+                account_balance:
+                  type: number
+                  description: Current account balance
+                account_id:
+                  type: string
+                  description: Account identifier
+                account_type:
+                  type: string
+                  description: Type of account (e.g., SAVINGS)
+                acquiring_bankname:
+                  type: string
+                  description: Name of the acquiring bank
+                acquiring_country:
+                  type: string
+                  description: Country of the acquiring bank
+                card_masked:
+                  type: boolean
+                  description: Whether the card number is masked
+                card_number:
+                  type: string
+                  description: Masked card number
+                card_type:
+                  type: string
+                  description: Type of card (e.g., CREDIT)
+                count_txn_id_1d:
+                  type: integer
+                  description: Number of transactions in last 24 hours
+                counter_partyid:
+                  type: string
+                  description: Counter party identifier
+                courier_fingerprint:
+                  type: string
+                  description: Courier's unique fingerprint
+                courierid:
+                  type: string
+                  description: Courier identifier
+                customer_fingerprint:
+                  type: string
+                  description: Customer's unique fingerprint
+                customer_id:
+                  type: string
+                  description: Customer identifier
+                customer_name:
+                  type: string
+                  description: Name of the customer
+                device_appcloned:
+                  type: boolean
+                  description: Whether the app is cloned
+                device_id:
+                  type: string
+                  description: Device identifier
+                device_ip:
+                  type: string
+                  description: IP address of the device
+                device_iplocation:
+                  type: string
+                  description: Location based on IP
+                device_mockgps:
+                  type: boolean
+                  description: Whether mock GPS is detected
+                device_vpnactive:
+                  type: boolean
+                  description: Whether VPN is active
+                event_type:
+                  type: string
+                  description: Type of transaction event
+                issuing_bankname:
+                  type: string
+                  description: Name of the issuing bank
+                issuing_country:
+                  type: string
+                  description: Country of the issuing bank
+                merchant_addresscity:
+                  type: string
+                  description: Merchant's city
+                merchant_addresscountry:
+                  type: string
+                  description: Merchant's country
+                merchant_addressdistrict:
+                  type: string
+                  description: Merchant's district
+                merchant_addressline1:
+                  type: string
+                  description: Merchant's street address
+                merchant_addresslocality:
+                  type: string
+                  description: Merchant's locality
+                merchant_addresspostalcode:
+                  type: string
+                  description: Merchant's postal code
+                merchant_addressstate:
+                  type: string
+                  description: Merchant's state
+                merchant_categorycode:
+                  type: string
+                  description: Merchant category code
+                merchant_country:
+                  type: string
+                  description: Merchant's country
+                merchant_id:
+                  type: string
+                  description: Merchant identifier
+                merchant_name:
+                  type: string
+                  description: Name of the merchant
+                merchant_posid:
+                  type: string
+                  description: Point of sale identifier
+                order_dest_latitude:
+                  type: number
+                  description: Destination latitude
+                order_dest_longitude:
+                  type: number
+                  description: Destination longitude
+                order_id:
+                  type: string
+                  description: Order identifier
+                order_origin_latitude:
+                  type: number
+                  description: Origin latitude
+                order_origin_longitude:
+                  type: number
+                  description: Origin longitude
+                order_received_timestamp:
+                  type: string
+                  description: When order was received
+                order_size:
+                  type: integer
+                  description: Size of the order
+                order_status:
+                  type: string
+                  description: Status of the order
+                order_timestamp:
+                  type: string
+                  description: When order was placed
+                sum_txn_amount_1d:
+                  type: number
+                  description: Sum of transaction amounts in last 24 hours
+                transaction_id:
+                  type: string
+                  description: Transaction identifier
+                txn_amount:
+                  type: number
+                  description: Transaction amount
+                txn_beneficiarymobileno:
+                  type: string
+                  description: Beneficiary mobile number
+                txn_beneficiaryname:
+                  type: string
+                  description: Name of beneficiary
+                txn_currencycode:
+                  type: string
+                  description: Transaction currency code
+                txn_date:
+                  type: string
+                  description: Transaction date
+                txn_foreignamount:
+                  type: number
+                  description: Amount in foreign currency
+                txn_foreigncurrencycode:
+                  type: string
+                  description: Foreign currency code
+                txn_id:
+                  type: string
+                  description: Transaction identifier
+                txn_inramount:
+                  type: number
+                  description: Amount in INR
+                txn_narration:
+                  type: string
+                  description: Transaction description
+                txn_sendermobileno:
+                  type: string
+                  description: Sender's mobile number
+                txn_sendername:
+                  type: string
+                  description: Name of sender
+                txn_time:
+                  type: string
+                  description: Transaction time
+                txn_type:
+                  type: string
+                  description: Type of transaction
+                txn_typeother:
+                  type: string
+                  description: Additional transaction type details
+                wallet_balance:
+                  type: number
+                  description: Wallet balance
+                wallet_id:
+                  type: string
+                  description: Wallet identifier
         caseStatus:
           type: string
           enum: [REQUIRED, NOT_REQUIRED]
