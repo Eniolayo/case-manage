@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export function CaseListSkeleton() {
   return (
@@ -332,5 +333,117 @@ export function CustomerDetailSkeleton() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+export function StatsCardsSkeleton() {
+  return (
+    <div className="grid gap-4 grid-cols-1 auto-rows-auto md:grid-cols-3 lg:grid-cols-5">
+      {Array(5)
+        .fill(null)
+        .map((_, i) => (
+          <Card
+            key={i}
+            className="cursor-pointer transition-colors hover:bg-muted/50"
+          >
+            <CardContent className="p-4">
+              <div className="flex flex-col gap-2">
+                <Skeleton className="h-4 w-20" />
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-8 w-12" />
+                  <div className="flex items-center gap-1">
+                    <Skeleton className="h-6 w-12 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+    </div>
+  );
+}
+
+export function FiltersSkeleton() {
+  return (
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-4">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-10 w-48" />
+      </div>
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-8 w-16" />
+        <Skeleton className="h-8 w-16" />
+      </div>
+    </div>
+  );
+}
+
+export function AnalyticsOverviewSkeleton() {
+  return (
+    <div className="mt-8">
+      <Skeleton className="h-6 w-48 mb-4" />
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-5">
+        {/* Cases Trend Chart Skeleton */}
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <Skeleton className="h-5 w-48" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-[300px] w-full" />
+          </CardContent>
+        </Card>
+
+        {/* Case Distribution Chart Skeleton */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <Skeleton className="h-5 w-36" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-[300px] w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+export function DashboardCaseListSkeleton() {
+  return (
+    <div className="mt-8">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <Skeleton className="h-6 w-32" />
+        <Skeleton className="h-4 w-24" />
+      </div>
+      <CaseListSkeleton />
+      <div className="mt-4 flex items-center justify-between">
+        <Skeleton className="h-4 w-32" />
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-8" />
+          <Skeleton className="h-8 w-8" />
+          <Skeleton className="h-8 w-8" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ErrorDisplay({
+  error,
+  onRetry,
+}: {
+  error: Error;
+  onRetry?: () => void;
+}) {
+  return (
+    <div className="text-center py-8">
+      <p className="text-red-500 mb-4">
+        Error: {error?.message || "Something went wrong"}
+      </p>
+      {onRetry && (
+        <Button onClick={onRetry} variant="outline">
+          Try Again
+        </Button>
+      )}
+    </div>
   );
 }

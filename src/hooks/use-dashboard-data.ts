@@ -6,7 +6,7 @@ import {
   DashboardStats,
   DashboardListData,
 } from "@/types/dashboard";
-import { useCases, useCaseSummary } from "@/hooks/use-api";
+import { useCases } from "@/hooks/use-api";
 
 interface DashboardDataHookResult {
   stats: DashboardStats;
@@ -19,8 +19,19 @@ interface DashboardDataHookResult {
     pageSize: number;
     totalItems: number;
   };
-  isLoading: boolean;
-  error: Error | null;
+  loading: {
+    stats: boolean;
+    charts: boolean;
+    cases: boolean;
+    filters: boolean;
+    overall: boolean;
+  };
+  errors: {
+    stats: Error | null;
+    charts: Error | null;
+    cases: Error | null;
+    filters: Error | null;
+  };
   filters: {
     primaryFilter: FilterType;
     statusFilter: StatusFilter;
@@ -37,6 +48,9 @@ interface DashboardDataHookResult {
     handlePageChange: (page: number) => void;
     sortBy: "created" | "priority" | "status";
     sortOrder: "asc" | "desc";
+    retryStats: () => void;
+    retryCharts: () => void;
+    retryCases: () => void;
   };
 }
 
@@ -53,12 +67,12 @@ export function useDashboardData(): DashboardDataHookResult {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-
   // Use TanStack Query hooks
   const {
     data: casesResponse,
     isLoading: casesLoading,
     error: casesError,
+    refetch: refetchCases,
   } = useCases();
 
   // const {
@@ -66,6 +80,27 @@ export function useDashboardData(): DashboardDataHookResult {
   //   isLoading: summaryLoading,
   //   error: summaryError,
   // } = useCaseSummary();
+
+  // Section-specific loading states
+  const loading = useMemo(() => {
+    return {
+      stats: casesLoading, // Stats depend on cases data
+      charts: casesLoading, // Charts depend on cases data
+      cases: casesLoading, // Cases list loading
+      filters: false, // Filters are always ready
+      overall: casesLoading, // Overall loading state
+    };
+  }, [casesLoading]);
+
+  // Section-specific error states
+  const errors = useMemo(() => {
+    return {
+      stats: casesError || null,
+      charts: casesError || null,
+      cases: casesError || null,
+      filters: null, // Filters don't have separate errors
+    };
+  }, [casesError]);
 
   // Transform data using useMemo for performance
   const data = useMemo(() => {
@@ -95,12 +130,24 @@ export function useDashboardData(): DashboardDataHookResult {
       escalated: data.filter((item) => item.status === "ESCALATED").length,
     };
   }, [data]);
-
   // Combine loading states
-  const isLoading = casesLoading;
+  // const isLoading = casesLoading;
 
   // Combine errors
-  const error = casesError || null;
+  // const error = casesError || null;
+
+  // Retry functions
+  const retryStats = useCallback(() => {
+    refetchCases();
+  }, [refetchCases]);
+
+  const retryCharts = useCallback(() => {
+    refetchCases();
+  }, [refetchCases]);
+
+  const retryCases = useCallback(() => {
+    refetchCases();
+  }, [refetchCases]);
 
   // Filter handlers
   const handleCardClick = useCallback((status: StatusFilter) => {
@@ -190,8 +237,8 @@ export function useDashboardData(): DashboardDataHookResult {
       pageSize: itemsPerPage,
       totalItems: paginationData.totalItems,
     },
-    isLoading,
-    error,
+    loading,
+    errors,
     filters: {
       primaryFilter,
       statusFilter,
@@ -208,6 +255,9 @@ export function useDashboardData(): DashboardDataHookResult {
       handlePageChange,
       sortBy,
       sortOrder,
+      retryStats,
+      retryCharts,
+      retryCases,
     },
   };
 }

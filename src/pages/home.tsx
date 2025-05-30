@@ -1,12 +1,18 @@
 import { useState, useCallback } from "react";
 import { PageHeader } from "@/components/page-header";
-import { Button } from "@/components/ui/button";
 import { AlertControls } from "@/components/alert-controls";
 import { AnalyticsOverview } from "@/components/dashboard/analytics-overview";
 import { DashboardCaseList } from "@/components/dashboard/case-list";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { Filters } from "@/components/dashboard/filters";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
+import {
+  StatsCardsSkeleton,
+  FiltersSkeleton,
+  AnalyticsOverviewSkeleton,
+  DashboardCaseListSkeleton,
+  ErrorDisplay,
+} from "@/components/skeletons";
 
 export default function Home() {
   const [showAlert, setShowAlert] = useState(false);
@@ -15,8 +21,8 @@ export default function Home() {
     chartsData,
     listData,
     pagination,
-    isLoading: casesLoading,
-    error: casesError,
+    loading,
+    errors,
     filters: { primaryFilter, statusFilter, currentPage },
     actions: {
       handleCardClick,
@@ -26,6 +32,9 @@ export default function Home() {
       handlePageChange,
       sortBy,
       sortOrder,
+      retryStats,
+      retryCharts,
+      retryCases,
     },
   } = useDashboardData();
 
@@ -36,25 +45,17 @@ export default function Home() {
     setShowAlert(false);
     console.log("View case details");
   }, []);
-  console.log(listData, "listData");
-
   return (
     <div className="flex flex-col">
       <PageHeader title="Dashboard" />
-      {casesError ? (
-        <main className="flex-1 p-4 sm:p-6">
-          <div className="text-center py-8">
-            <p className="text-red-500">
-              Error loading cases: {casesError?.message}
-            </p>
-            <Button onClick={() => window.location.reload()} className="mt-4">
-              Try Again
-            </Button>
-          </div>
-        </main>
-      ) : (
-        <main className="flex-1 p-4 sm:p-6">
-          <div className="mb-8">
+      <main className="flex-1 p-4 sm:p-6">
+        <div className="mb-8">
+          {/* Filters Section */}
+          {loading.filters ? (
+            <FiltersSkeleton />
+          ) : errors.filters ? (
+            <ErrorDisplay error={errors.filters} />
+          ) : (
             <Filters
               primaryFilter={primaryFilter}
               onPrimaryFilterChange={handlePrimaryFilterChange}
@@ -63,32 +64,53 @@ export default function Home() {
               sortBy={sortBy}
               sortOrder={sortOrder}
             />
+          )}
 
-            <section className="mt-6">
+          <section className="mt-6">
+            {/* Stats Cards Section */}
+            {loading.stats ? (
+              <StatsCardsSkeleton />
+            ) : errors.stats ? (
+              <ErrorDisplay error={errors.stats} onRetry={retryStats} />
+            ) : (
               <StatsCards
                 stats={stats}
                 statusFilter={statusFilter}
                 onCardClick={handleCardClick}
               />
+            )}
 
+            {/* Analytics Overview Section */}
+            {loading.charts ? (
+              <AnalyticsOverviewSkeleton />
+            ) : errors.charts ? (
+              <ErrorDisplay error={errors.charts} onRetry={retryCharts} />
+            ) : (
               <AnalyticsOverview
                 chartsData={chartsData}
                 primaryFilter={primaryFilter}
               />
+            )}
 
+            {/* Dashboard Case List Section */}
+            {loading.cases ? (
+              <DashboardCaseListSkeleton />
+            ) : errors.cases ? (
+              <ErrorDisplay error={errors.cases} onRetry={retryCases} />
+            ) : (
               <DashboardCaseList
                 listData={listData}
-                loading={casesLoading}
+                loading={false}
                 statusFilter={statusFilter}
                 primaryFilter={primaryFilter}
                 pagination={pagination}
                 currentPage={currentPage}
                 onPageChange={handlePageChange}
               />
-            </section>
-          </div>
-        </main>
-      )}
+            )}
+          </section>
+        </div>
+      </main>
 
       <AlertControls
         showAlert={showAlert}

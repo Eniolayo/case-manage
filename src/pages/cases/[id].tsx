@@ -326,7 +326,7 @@ export default function CaseDetailPage() {
                     <Label className="text-xs text-muted-foreground">
                       Entity ID
                     </Label>
-                    <p className="font-medium">1234 56XX XXXX 0789</p>
+                    <p className="font-medium">{caseData.entityId}</p>
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">
@@ -395,12 +395,11 @@ export default function CaseDetailPage() {
                       <p className="font-medium">3d 5h 26m</p>
                     </div>
                   </div>
-                </div>
-
+                </div>{" "}
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="resolution-type">Resolution Type</Label>
-                    <Select>
+                    <Select disabled={caseData.status.toLowerCase() !== "new"}>
                       <SelectTrigger id="resolution-type">
                         <SelectValue placeholder="Select Resolution Type" />
                       </SelectTrigger>
@@ -415,6 +414,11 @@ export default function CaseDetailPage() {
                     <Select
                       value={commentHeader}
                       onValueChange={setCommentHeader}
+                      disabled={
+                        !["new", "in_progress", "in-progress"].includes(
+                          caseData.status.toLowerCase()
+                        )
+                      }
                     >
                       <SelectTrigger id="comment-header">
                         <SelectValue placeholder="Select Comment Header" />
@@ -497,7 +501,7 @@ export default function CaseDetailPage() {
                     <p className="text-sm mt-1 bg-muted/30 rounded p-2">
                       {voiceNoteTranscription}
                     </p>
-                  </div>
+                  </div>{" "}
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="comment">Enter comment</Label>
                     <div className="flex flex-col gap-2">
@@ -507,6 +511,11 @@ export default function CaseDetailPage() {
                         rows={3}
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
+                        disabled={
+                          !["new", "in_progress", "in-progress"].includes(
+                            caseData.status.toLowerCase()
+                          )
+                        }
                       />
                       <div className="flex justify-end">
                         <Button
@@ -515,7 +524,10 @@ export default function CaseDetailPage() {
                           disabled={
                             !comment.trim() ||
                             !commentHeader ||
-                            isSubmittingComment
+                            isSubmittingComment ||
+                            !["new", "in_progress", "in-progress"].includes(
+                              caseData.status.toLowerCase()
+                            )
                           }
                         >
                           {isSubmittingComment ? "Adding..." : "Add Comment"}
