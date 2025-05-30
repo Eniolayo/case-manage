@@ -1,8 +1,6 @@
-
-
-import { useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,10 +9,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Bell, Settings, LogOut, HelpCircle, User, Clock, AlertCircle, CheckCircle, X } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
+} from "@/components/ui/dropdown-menu";
+import {
+  Bell,
+  Settings,
+  LogOut,
+  HelpCircle,
+  User,
+  Clock,
+  AlertCircle,
+  CheckCircle,
+  X,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function UserNav() {
   const [notifications, setNotifications] = useState([
@@ -58,66 +66,74 @@ export function UserNav() {
       type: "system",
       read: true,
     },
-  ])
-  const unreadCount = notifications.filter((n) => !n.read).length
+  ]);
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case "assignment":
-        return <User className="h-4 w-4 text-blue-500" />
+        return <User className="h-4 w-4 text-blue-500" />;
       case "escalation":
-        return <AlertCircle className="h-4 w-4 text-red-500" />
+        return <AlertCircle className="h-4 w-4 text-red-500" />;
       case "resolution":
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
       default:
-        return <Bell className="h-4 w-4 text-gray-500" />
+        return <Bell className="h-4 w-4 text-gray-500" />;
     }
-  }
+  };
 
   const handleLogout = () => {
-    alert("Logout functionality would redirect to login page")
-  }
+    alert("Logout functionality would redirect to login page");
+  };
 
   const markAsRead = (notificationId: string) => {
     setNotifications((prev) =>
-      prev.map((notification) => (notification.id === notificationId ? { ...notification, read: true } : notification)),
-    )
-  }
+      prev.map((notification) =>
+        notification.id === notificationId
+          ? { ...notification, read: true }
+          : notification
+      )
+    );
+  };
 
   const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((notification) => ({ ...notification, read: true })))
-  }
+    setNotifications((prev) =>
+      prev.map((notification) => ({ ...notification, read: true }))
+    );
+  };
 
   const deleteNotification = (notificationId: string) => {
-    setNotifications((prev) => prev.filter((notification) => notification.id !== notificationId))
-  }
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== notificationId)
+    );
+  };
 
   const handleNotificationClick = (notification: any) => {
     if (!notification.read) {
-      markAsRead(notification.id)
+      markAsRead(notification.id);
     }
 
     switch (notification.type) {
       case "assignment":
-        const caseMatch = notification.description.match(/Case #(\d+)/)
+        const caseMatch = notification.description.match(/Case #(\d+)/);
         if (caseMatch) {
-          alert(`Would navigate to /cases/${caseMatch[1]}`)
+          alert(`Would navigate to /cases/${caseMatch[1]}`);
         }
-        break
+        break;
       case "escalation":
-        const escalationMatch = notification.description.match(/Case #(\d+)/)
+        const escalationMatch = notification.description.match(/Case #(\d+)/);
         if (escalationMatch) {
-          alert(`Would navigate to /cases/${escalationMatch[1]}`)
+          alert(`Would navigate to /cases/${escalationMatch[1]}`);
         }
-        break
+        break;
       default:
-        break
+        break;
     }
-  }
+  };
 
   return (
     <div className="flex items-center gap-4">
-      <DropdownMenu>
+      {/* <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="relative h-8 w-8 sm:h-10 sm:w-10">
             <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -196,47 +212,52 @@ export function UserNav() {
             </Button>
           </div>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu> */}
       <section className="block md:hidden">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild >
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end" forceMount>
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">John Doe</p>
-              <p className="text-xs leading-none text-muted-foreground">john.doe@example.com</p>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarImage
+                  src="/placeholder.svg?height=32&width=32"
+                  alt="User"
+                />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">John Doe</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                  john.doe@example.com
+                </p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <HelpCircle className="mr-2 h-4 w-4" />
+                <span>Help</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <HelpCircle className="mr-2 h-4 w-4" />
-              <span>Help</span>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleLogout}>
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Log out</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </section>
     </div>
-  )
+  );
 }
