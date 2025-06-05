@@ -145,7 +145,7 @@ export default function MyCasesPage() {
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-medium">
-              My Cases ({filteredList.length})
+              My Cases ({casesData?.pagination?.totalItems || 0})
             </h3>
             {(primaryFilter !== "ALL" ||
               statusFilter !== "ALL" ||

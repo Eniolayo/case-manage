@@ -22,9 +22,11 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useMemo } from "react";
 import { BureauLogo } from "./BureauLogo";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useCases } from "@/hooks/use-api";
+import { CaseStatus } from "@/lib/api-types";
 
 const SidebarContext = createContext<{
   isCollapsed: boolean;
@@ -36,30 +38,18 @@ const SidebarContext = createContext<{
 
 export const useSidebar = () => useContext(SidebarContext);
 
-const navigation = [
-  {
-    name: "Dashboard",
-    href: "/",
-    icon: LayoutDashboard,
-  },
-  {
-    name: "My Cases",
-    href: "/my-cases",
-    icon: FileText,
-    badge: "3",
-  },
-  {
-    name: "High Risk",
-    href: "/high-risk",
-    icon: AlertTriangle,
-    badge: "4",
-  },
-  {
-    name: "All Cases",
-    href: "/cases",
-    icon: FileText,
-  },
-];
+// Hook to get current user from localStorage
+const useCurrentUser = () => {
+  const [user] = useState(() => {
+    try {
+      const userStr = localStorage.getItem("user");
+      return userStr ? JSON.parse(userStr) : null;
+    } catch {
+      return null;
+    }
+  });
+  return user;
+};
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useLocalStorage(
@@ -79,6 +69,57 @@ export function Sidebar() {
   const pathname = location.pathname;
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isCollapsed, setIsCollapsed } = useSidebar();
+
+  // Get current user
+  const currentUser = useCurrentUser();
+  const currentUserId = currentUser?.id;
+
+  // Fetch case counts for dynamic badges
+  const { data: myCasesData } = useCases(
+    currentUserId ? { assignedTo: parseInt(currentUserId) } : undefined
+  );
+  // const { data: highRiskCasesData } = useCases({ priority: "High" });
+  const { data: highRiskCasesData } = useCases({
+    page: 1,
+    pageSize: 10,
+    status: "ALL" as CaseStatus,
+    priority: "High", // Always filter for high priority cases
+    sortBy: "createdAt", // Sort by creation date by default
+    sortOrder: "desc", // Show newest first
+  });
+  // Calculate case counts
+  const myCasesCount = myCasesData?.pagination.totalItems || 0;
+  const highRiskCasesCount = highRiskCasesData?.pagination.totalItems || 0;
+
+  // Dynamic navigation array
+  const navigation = useMemo(
+    () => [
+      {
+        name: "Dashboard",
+        href: "/",
+        icon: LayoutDashboard,
+      },
+      {
+        name: "My Cases",
+        href: "/my-cases",
+        icon: FileText,
+        badge: myCasesCount > 0 ? myCasesCount.toString() : undefined,
+      },
+      {
+        name: "High Risk",
+        href: "/high-risk",
+        icon: AlertTriangle,
+        badge:
+          highRiskCasesCount > 0 ? highRiskCasesCount.toString() : undefined,
+      },
+      {
+        name: "All Cases",
+        href: "/cases",
+        icon: FileText,
+      },
+    ],
+    [myCasesCount, highRiskCasesCount]
+  );
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
