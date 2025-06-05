@@ -15,7 +15,7 @@ interface TooltipParams {
   };
 }
 
-type CaseStatus = "In Progress" | "Resolved" | "Escalated";
+type CaseStatus = "NEW" | "IN_PROGRESS" | "RESOLVED" | "ESCALATED" | "CLOSED";
 type FilterType = "ALL" | "DEBIT_CARD" | "CREDIT_CARD" | "WALLET";
 
 type Case = {
@@ -35,26 +35,50 @@ interface CaseChartsProps {
 }
 
 export function CaseCharts({ cases }: CaseChartsProps) {
+  // Helper function to format status labels for display
+  const formatStatusLabel = (status: string): string => {
+    switch (status) {
+      case "NEW":
+        return "New";
+      case "IN_PROGRESS":
+        return "In Progress";
+      case "RESOLVED":
+        return "Resolved";
+      case "ESCALATED":
+        return "Escalated";
+      case "CLOSED":
+        return "Closed";
+      default:
+        // Fallback: convert underscore to space and capitalize first letter of each word
+        return status
+          .toLowerCase()
+          .split("_")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+    }
+  };
+
   // Prepare data for status distribution chart
   const statusData = cases.reduce((acc, case_) => {
-    acc[case_.status] = (acc[case_.status] || 0) + 1;
+    const formattedStatus = formatStatusLabel(case_.status);
+    acc[formattedStatus] = (acc[formattedStatus] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
   const statusLabels = Object.keys(statusData);
-  const statusValues = Object.values(statusData);
-
-  // Create color mapping based on status
+  const statusValues = Object.values(statusData); // Create color mapping based on status to match badge colors
   const getStatusColor = (status: string) => {
     switch (status) {
+      case "New":
+        return "#1d4fd8d6";
       case "In Progress":
-        return "#f59e0b"; // Yellow/amber
+        return "#f59e0b";
       case "Resolved":
-        return "#10b981"; // Green
+        return "#10b981";
       case "Escalated":
-        return "#ef4444"; // Red
+        return "#ef4444";
       default:
-        return "#6b7280"; // Gray for unknown status
+        return "#6b7280";
     }
   };
   console.log(statusValues);

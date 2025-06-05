@@ -263,7 +263,13 @@ const auditColumns: Column<AuditEntry>[] = [
 ];
 export default function CaseDetailPage() {
   const params = useParams();
-  const caseId = params.id ? parseInt(params.id, 10) : 0; // API hooks
+  const caseId = params.id ? parseInt(params.id, 10) : 0;
+
+  // Pagination state for comments
+  const [commentsPage, setCommentsPage] = useState(1);
+  const commentsPageSize = 10;
+
+  // API hooks
   const {
     data: caseData,
     isLoading: caseLoading,
@@ -271,7 +277,7 @@ export default function CaseDetailPage() {
   } = useCase(caseId);
   const { data: commentsData, isLoading: commentsLoading } = useCaseComments(
     caseId,
-    { page: 1, pageSize: 50 }
+    { page: commentsPage, pageSize: commentsPageSize }
   );
   const createCommentMutation = useCreateComment(caseId);
   const isSubmittingComment = createCommentMutation.isPending;
@@ -776,6 +782,18 @@ export default function CaseDetailPage() {
                         loading={commentsLoading}
                         emptyText="No comments available"
                         maxHeight="300px"
+                        pagination={
+                          commentsData?.pagination
+                            ? {
+                                page: commentsData.pagination.page,
+                                pageSize: commentsData.pagination.pageSize,
+                                total: commentsData.pagination.totalItems,
+                                onChange: (page: number, pageSize: number) => {
+                                  setCommentsPage(page);
+                                },
+                              }
+                            : undefined
+                        }
                       />
                     </div>
                   </TabsContent>{" "}

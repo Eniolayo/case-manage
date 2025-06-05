@@ -163,8 +163,8 @@ const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   };
 
   return (
-    <Badge className={getStatusClass(status)}>
-      {status.replace("_", " ").replace("-", " ")}
+    <Badge className={cn(getStatusClass(status), "capitalize")}>
+      {status.replace("_", " ").replace("-", " ").toLowerCase()}
     </Badge>
   );
 };

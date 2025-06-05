@@ -1,17 +1,11 @@
-import { Button } from "@/components/ui/button";
 import { Pagination } from "@/lib/api-types";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-interface PaginationControlsProps {
+type PaginationControlsProps = {
   pagination: Pagination | undefined;
   currentPage: number;
   onPageChange: (page: number) => void;
-}
+};
 
 export function PaginationControls({
   pagination,
@@ -19,7 +13,6 @@ export function PaginationControls({
   onPageChange,
 }: PaginationControlsProps) {
   if (!pagination) return null;
-
   const renderPageNumbers = () => {
     const pageNumbers = [];
     const totalPages = pagination.totalPages;
@@ -28,20 +21,18 @@ export function PaginationControls({
     // Always show first page
     if (current > 3) {
       pageNumbers.push(
-        <Button
+        <button
           key={1}
-          variant="outline"
-          size="sm"
-          className="h-9 w-9 p-0 hover:bg-primary/10 transition-colors"
+          className="h-7 w-7 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full transition-all"
           onClick={() => onPageChange(1)}
         >
           1
-        </Button>
+        </button>
       );
 
       if (current > 4) {
         pageNumbers.push(
-          <span key="dots1" className="px-2 text-muted-foreground">
+          <span key="dots1" className="px-1 text-muted-foreground/50 text-xs">
             ⋯
           </span>
         );
@@ -54,19 +45,17 @@ export function PaginationControls({
 
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(
-        <Button
+        <button
           key={i}
-          variant={current === i ? "default" : "outline"}
-          size="sm"
-          className={`h-9 w-9 p-0 transition-all duration-200 ${
+          className={`h-7 w-7 text-xs font-medium rounded-full transition-all ${
             current === i
-              ? "bg-primary text-primary-foreground shadow-md scale-105"
-              : "hover:bg-primary/10 hover:scale-105"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
           }`}
           onClick={() => onPageChange(i)}
         >
           {i}
-        </Button>
+        </button>
       );
     }
 
@@ -74,108 +63,60 @@ export function PaginationControls({
     if (current < totalPages - 2) {
       if (current < totalPages - 3) {
         pageNumbers.push(
-          <span key="dots2" className="px-2 text-muted-foreground">
+          <span key="dots2" className="px-1 text-muted-foreground/50 text-xs">
             ⋯
           </span>
         );
       }
 
       pageNumbers.push(
-        <Button
+        <button
           key={totalPages}
-          variant="outline"
-          size="sm"
-          className="h-9 w-9 p-0 hover:bg-primary/10 transition-colors"
+          className="h-7 w-7 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-full transition-all"
           onClick={() => onPageChange(totalPages)}
         >
           {totalPages}
-        </Button>
+        </button>
       );
     }
 
     return pageNumbers;
   };
-
   return (
-    <div className="mt-8 mb-4">
-      {/* Main pagination controls */}
-      <div className="flex flex-col items-center gap-4 sm:gap-6">
-        <nav className="flex items-center gap-1 rounded-lg border bg-background/50 backdrop-blur-sm p-1 shadow-sm">
-          {/* First page button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={currentPage <= 1}
-            onClick={() => onPageChange(1)}
-            className="h-9 w-9 p-0 hover:bg-primary/10 disabled:opacity-50 transition-all duration-200"
-            title="First page"
-          >
-            <ChevronsLeft className="h-4 w-4" />
-          </Button>
+    <div className="flex flex-col items-center gap-3 mt-4">
+      {/* Minimal navigation controls */}
+      <div className="flex items-center gap-2">
+        {/* Previous button */}
+        <button
+          disabled={currentPage <= 1}
+          onClick={() => onPageChange(currentPage - 1)}
+          className="h-7 w-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:pointer-events-none transition-all hover:bg-muted/50 rounded-full"
+          title="Previous page"
+        >
+          <ChevronLeft className="h-3.5 w-3.5" />
+        </button>
 
-          {/* Previous page button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={currentPage <= 1}
-            onClick={() => onPageChange(currentPage - 1)}
-            className="h-9 px-3 hover:bg-primary/10 disabled:opacity-50 transition-all duration-200 font-medium"
-            title="Previous page"
-          >
-            <ChevronLeft className="h-4 w-4 mr-1" />
-            Previous
-          </Button>
+        {/* Page numbers */}
+        <div className="flex items-center gap-1">{renderPageNumbers()}</div>
 
-          {/* Page numbers */}
-          <div className="flex items-center gap-1 mx-2">
-            {renderPageNumbers()}
-          </div>
+        {/* Next button */}
+        <button
+          disabled={!pagination || currentPage >= pagination.totalPages}
+          onClick={() => onPageChange(currentPage + 1)}
+          className="h-7 w-7 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:pointer-events-none transition-all hover:bg-muted/50 rounded-full"
+          title="Next page"
+        >
+          <ChevronRight className="h-3.5 w-3.5" />
+        </button>
+      </div>
 
-          {/* Next page button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={!pagination || currentPage >= pagination.totalPages}
-            onClick={() => onPageChange(currentPage + 1)}
-            className="h-9 px-3 hover:bg-primary/10 disabled:opacity-50 transition-all duration-200 font-medium"
-            title="Next page"
-          >
-            Next
-            <ChevronRight className="h-4 w-4 ml-1" />
-          </Button>
-
-          {/* Last page button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={!pagination || currentPage >= pagination.totalPages}
-            onClick={() => onPageChange(pagination.totalPages)}
-            className="h-9 w-9 p-0 hover:bg-primary/10 disabled:opacity-50 transition-all duration-200"
-            title="Last page"
-          >
-            <ChevronsRight className="h-4 w-4" />
-          </Button>
-        </nav>
-
-        {/* Pagination info */}
-        <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground sm:flex-row sm:gap-4">
-          <div className="flex items-center gap-1">
-            <span className="font-medium text-foreground">
-              Page {pagination.page}
-            </span>
-            <span>of</span>
-            <span className="font-medium text-foreground">
-              {pagination.totalPages}
-            </span>
-          </div>
-          <div className="hidden sm:block">•</div>
-          <div className="flex items-center gap-1">
-            <span className="font-medium text-foreground">
-              {pagination.totalItems.toLocaleString()}
-            </span>
-            <span>total items</span>
-          </div>
-        </div>
+      {/* Subtle info line */}
+      <div className="text-xs text-muted-foreground/70 flex items-center gap-2">
+        <span>{pagination.totalItems.toLocaleString()} items</span>
+        <span className="w-1 h-1 bg-muted-foreground/30 rounded-full"></span>
+        <span>
+          Page {pagination.page} of {pagination.totalPages}
+        </span>
       </div>
     </div>
   );

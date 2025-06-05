@@ -11,6 +11,7 @@ import {
 import { CaseList } from "@/components/case-list";
 import { PageHeader } from "@/components/page-header";
 import { CaseListSkeleton } from "@/components/skeleton-loaders";
+import { PaginationControls } from "@/components/pagination-controls";
 import { useCases } from "@/hooks/use-api";
 import type { CaseSummary, CaseStatus } from "@/lib/api-types";
 import {
@@ -19,6 +20,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
+  BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 
 type FilterType = "ALL" | "DEBIT_CARD" | "CREDIT_CARD" | "WALLET";
@@ -182,54 +184,13 @@ export default function AllCasesPage() {
             )}
           </div>
         </div>
-        <CaseList cases={listData} />
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="mt-6 flex items-center justify-between">
-            {" "}
-            <p className="text-sm text-muted-foreground">
-              Showing {(currentPage - 1) * pageSize + 1} to{" "}
-              {Math.min(
-                currentPage * pageSize,
-                casesData?.pagination.totalItems || 0
-              )}{" "}
-              of {casesData?.pagination.totalItems || 0} cases
-            </p>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const page = i + 1;
-                return (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </Button>
-                );
-              })}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                }
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
+        <CaseList cases={listData} /> {/* Pagination */}
+        {casesData?.pagination && casesData.pagination.totalPages > 1 && (
+          <PaginationControls
+            pagination={casesData.pagination}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
         )}
       </main>
     </div>

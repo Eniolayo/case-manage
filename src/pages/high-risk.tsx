@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CaseList } from "@/components/case-list";
+import { PaginationControls } from "@/components/pagination-controls";
 import { useCases } from "@/hooks/use-api";
 import { CaseStatus, CaseSummary } from "@/lib/api-types";
 import {
@@ -102,7 +103,6 @@ export default function HighRiskPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-
         {/* Filters */}
         <div className="mb-6 space-y-4">
           <div className="flex flex-wrap items-center gap-4">
@@ -162,7 +162,6 @@ export default function HighRiskPage() {
             </div>
           </div>
         </div>
-
         {/* Results */}
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -185,54 +184,14 @@ export default function HighRiskPage() {
             )}
           </div>
         </div>
-
-        <CaseList cases={filteredCases} />
-
-        {/* Pagination */}
+        <CaseList cases={filteredCases} /> {/* Pagination */}
         {casesData?.pagination?.totalPages &&
           casesData.pagination.totalPages > 1 && (
-            <div className="mt-6 flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {(currentPage - 1) * pageSize + 1} to{" "}
-                {Math.min(
-                  currentPage * pageSize,
-                  casesData?.pagination.totalItems
-                )}{" "}
-                of {casesData?.pagination.totalItems} cases
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={currentPage === 1}
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(1, prev - 1))
-                  }
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 w-8 p-0"
-                  disabled
-                >
-                  {currentPage}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={currentPage === casesData?.pagination.totalPages}
-                  onClick={() =>
-                    setCurrentPage((prev) =>
-                      Math.min(casesData?.pagination.totalPages || 1, prev + 1)
-                    )
-                  }
-                >
-                  Next
-                </Button>
-              </div>
-            </div>
+            <PaginationControls
+              pagination={casesData.pagination}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
           )}
       </main>
     </div>

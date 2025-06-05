@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CaseList } from "@/components/case-list";
+import { PaginationControls } from "@/components/pagination-controls";
 import { useCases } from "@/hooks/use-api";
 import { CaseStatus, CaseSummary } from "@/lib/api-types";
 import {
@@ -30,7 +31,7 @@ export default function MyCasesPage() {
   const [primaryFilter, setPrimaryFilter] = useState<FilterType>("ALL");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
   // Get current user ID from local storage
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -81,7 +82,6 @@ export default function MyCasesPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-
         {/* Filters */}
         <div className="mb-6 space-y-4">
           <div className="flex flex-wrap items-center gap-4">
@@ -141,7 +141,6 @@ export default function MyCasesPage() {
             </div>
           </div>
         </div>
-
         {/* Results */}
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -165,9 +164,7 @@ export default function MyCasesPage() {
             )}
           </div>
         </div>
-
         <CaseList cases={filteredList} showAssignToMe={false} />
-
         {filteredList.length === 0 && (
           <div className="text-center py-12">
             <h3 className="text-lg font-semibold mb-2">No cases found</h3>
@@ -183,32 +180,17 @@ export default function MyCasesPage() {
               </Button>
             </Link>
           </div>
-        )}
-
+        )}{" "}
         {/* Pagination */}
-        {filteredList.length > 0 && casesData?.pagination && (
-          <div className="mt-6 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Showing {filteredList.length} of {casesData.pagination.totalItems}{" "}
-              cases
-            </p>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" disabled={currentPage === 1}>
-                Previous
-              </Button>
-              <Button variant="outline" size="sm" className="h-8 w-8 p-0">
-                {currentPage}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={currentPage === casesData.pagination.totalPages}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        )}
+        {filteredList.length > 0 &&
+          casesData?.pagination &&
+          casesData.pagination.totalPages > 1 && (
+            <PaginationControls
+              pagination={casesData.pagination}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
+          )}
       </main>
     </div>
   );
