@@ -15,7 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Filter,
   LinkIcon,
   Clock,
   FileText,
@@ -52,6 +51,8 @@ import {
 } from "@/components/ui/dialog";
 import { PageHeader } from "@/components/page-header";
 import { CaseDetailSkeleton } from "@/components/skeleton-loaders";
+import { DataTable } from "@/components/data-table";
+import type { Column } from "@/components/data-table";
 import {
   useCase,
   useCaseComments,
@@ -72,6 +73,194 @@ type Transaction = {
   country: string;
   details: string;
 };
+
+// Sample transaction data
+const transactionData: Transaction[] = [
+  {
+    id: "TXN123456789",
+    date: "2023-05-20 08:45",
+    amount: 1250.0,
+    status: "Pending",
+    fraudSeverity: "High",
+    scenarioName: "Unusual Location",
+    transactionType: "Purchase",
+    channel: "POS",
+    country: "USA",
+    details: "TXN123456789",
+  },
+  {
+    id: "TXN123456790",
+    date: "2023-05-20 08:47",
+    amount: 750.0,
+    status: "Pending",
+    fraudSeverity: "High",
+    scenarioName: "Multiple Attempts",
+    transactionType: "Purchase",
+    channel: "POS",
+    country: "USA",
+    details: "TXN123456790",
+  },
+  {
+    id: "TXN123456788",
+    date: "2023-05-19 14:30",
+    amount: 45.0,
+    status: "Genuine",
+    fraudSeverity: "Low",
+    scenarioName: "-",
+    transactionType: "Purchase",
+    channel: "Online",
+    country: "India",
+    details: "TXN123456788",
+  },
+];
+
+// Transaction table columns
+const transactionColumns: Column<Transaction>[] = [
+  {
+    key: "date",
+    title: "Transaction Date",
+    sortable: true,
+  },
+  {
+    key: "fraudSeverity",
+    title: "Fraud Severity",
+    sortable: true,
+  },
+  {
+    key: "scenarioName",
+    title: "Scenario Name",
+    sortable: true,
+  },
+  {
+    key: "transactionType",
+    title: "Transaction Type",
+    sortable: true,
+  },
+  {
+    key: "amount",
+    title: "Amount",
+    sortable: true,
+    render: (value) => `$${value.toFixed(2)}`,
+  },
+  {
+    key: "id",
+    title: "Transaction ID",
+    render: (value) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="cursor-help underline decoration-dotted">
+              {value}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-xs">Click to view full transaction details</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
+  },
+  {
+    key: "channel",
+    title: "Channel",
+    sortable: true,
+  },
+  {
+    key: "country",
+    title: "Country",
+    sortable: true,
+  },
+];
+
+// Comments table columns
+const commentsColumns: Column<Comment>[] = [
+  {
+    key: "createdAt",
+    title: "Datetime",
+    sortable: true,
+    render: (value) => new Date(value).toLocaleString(),
+  },
+  {
+    key: "authorId",
+    title: "User ID",
+    render: (value) => `user.${value}`,
+  },
+  {
+    key: "header",
+    title: "Header",
+    render: (value) => (
+      <Badge
+        variant="outline"
+        className={
+          value === "Investigation"
+            ? "bg-blue-50"
+            : value === "Customer Contact"
+            ? "bg-purple-50"
+            : value === "Resolution"
+            ? "bg-green-50"
+            : "bg-gray-50"
+        }
+      >
+        {value}
+      </Badge>
+    ),
+  },
+  {
+    key: "content",
+    title: "Comment",
+  },
+];
+
+// Audit history data type and columns
+type AuditEntry = {
+  id: string;
+  datetime: string;
+  userId: string;
+  action: string;
+};
+
+const auditData: AuditEntry[] = [
+  {
+    id: "1",
+    datetime: "2023-05-20 09:30",
+    userId: "system",
+    action: "Case created",
+  },
+  {
+    id: "2",
+    datetime: "2023-05-20 09:30",
+    userId: "system",
+    action: "Assigned to john.doe",
+  },
+  {
+    id: "3",
+    datetime: "2023-05-20 09:35",
+    userId: "john.doe",
+    action: "Status changed to WIP",
+  },
+  {
+    id: "4",
+    datetime: "2023-05-22 14:45",
+    userId: "jane.smith",
+    action: "Comment added",
+  },
+];
+
+const auditColumns: Column<AuditEntry>[] = [
+  {
+    key: "datetime",
+    title: "Datetime",
+    sortable: true,
+  },
+  {
+    key: "userId",
+    title: "User ID",
+  },
+  {
+    key: "action",
+    title: "Action",
+  },
+];
 export default function CaseDetailPage() {
   const params = useParams();
   const caseId = params.id ? parseInt(params.id, 10) : 0; // API hooks
@@ -537,220 +726,27 @@ export default function CaseDetailPage() {
                   </div>
                 </div>
               </CardContent>
-            </Card>
-
+            </Card>{" "}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between px-6 py-4">
                 <CardTitle className="text-base font-medium">
                   Transaction Details
                 </CardTitle>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 flex items-center gap-1"
-                  >
-                    <Filter className="h-3 w-3" />
-                    <span>Filter</span>
-                  </Button>
-                </div>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <table className="w-full relative">
-                    <thead className="sticky top-0 z-10 bg-background">
-                      <tr className="border-b bg-muted/50">
-                        <th className="px-4 py-3 text-left text-sm font-medium">
-                          Transaction Date
-                        </th>
-
-                        <th className="px-4 py-3 text-left text-sm font-medium">
-                          Fraud Severity
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium">
-                          Scenario Name
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium">
-                          Transaction Type
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium">
-                          Amount
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium">
-                          Transaction ID
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium">
-                          Channel
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium">
-                          Country
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr
-                        className="border-b bg-red-50 cursor-pointer"
-                        onClick={() =>
-                          setSelectedTransaction({
-                            amount: 1250.0,
-                            country: "USA",
-                            date: "2023-05-20 08:45",
-                            details: "TXN123456789",
-                            fraudSeverity: "High",
-                            id: "TXN123456789",
-                            scenarioName: "Unusual Location",
-                            status: "Pending",
-                            transactionType: "Purchase",
-                            channel: "POS",
-                          })
-                        }
-                      >
-                        <td className="px-4 py-3 text-sm">2023-05-20 08:45</td>
-
-                        <td className="px-4 py-3 text-sm">
-                          <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
-                            High
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 text-sm">Unusual Location</td>
-                        <td className="px-4 py-3 text-sm">Purchase</td>
-                        <td className="px-4 py-3 text-sm font-medium">
-                          $1,250.00
-                        </td>
-                        <td className="px-4 py-3 text-sm">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <span className="cursor-help underline decoration-dotted">
-                                  TXN123456789
-                                </span>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="text-xs">
-                                  Click to view full transaction details
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </td>
-                        <td className="px-4 py-3 text-sm">POS</td>
-                        <td className="px-4 py-3 text-sm">USA</td>
-                      </tr>
-                      <tr
-                        className="border-b bg-red-50 cursor-pointer"
-                        onClick={() =>
-                          setSelectedTransaction({
-                            amount: 750.0,
-                            country: "USA",
-                            date: "2023-05-20 08:47",
-                            details: "TXN123456790",
-                            fraudSeverity: "High",
-                            id: "TXN123456790",
-                            scenarioName: "Multiple Attempts",
-                            status: "Pending",
-                            transactionType: "Purchase",
-                            channel: "POS",
-                          })
-                        }
-                      >
-                        <td className="px-4 py-3 text-sm">2023-05-20 08:47</td>
-
-                        <td className="px-4 py-3 text-sm">
-                          <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
-                            High
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 text-sm">Multiple Attempts</td>
-                        <td className="px-4 py-3 text-sm">Purchase</td>
-                        <td className="px-4 py-3 text-sm font-medium">
-                          $750.00
-                        </td>
-                        <td className="px-4 py-3 text-sm">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <span className="cursor-help underline decoration-dotted">
-                                  TXN123456790
-                                </span>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="text-xs">
-                                  Click to view full transaction details
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </td>
-                        <td className="px-4 py-3 text-sm">POS</td>
-                        <td className="px-4 py-3 text-sm">USA</td>
-                      </tr>
-                      <tr
-                        className=" cursor-pointer"
-                        onClick={() =>
-                          setSelectedTransaction({
-                            amount: 45.0,
-                            country: "India",
-                            date: "2023-05-19 14:30",
-                            details: "TXN123456788",
-                            fraudSeverity: "Low",
-                            id: "TXN123456788",
-                            scenarioName: "-",
-                            status: "Genuine",
-                            transactionType: "Purchase",
-                            channel: "Online",
-                          })
-                        }
-                      >
-                        <td className="px-4 py-3 text-sm">2023-05-19 14:30</td>
-
-                        <td className="px-4 py-3 text-sm">
-                          <Badge variant="outline" className="bg-blue-50">
-                            Low
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 text-sm">-</td>
-                        <td className="px-4 py-3 text-sm">Purchase</td>
-                        <td className="px-4 py-3 text-sm">$45.00</td>
-                        <td className="px-4 py-3 text-sm">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <span className="cursor-help underline decoration-dotted">
-                                  TXN123456788
-                                </span>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="text-xs">
-                                  Click to view full transaction details
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </td>
-                        <td className="px-4 py-3 text-sm">Online</td>
-                        <td className="px-4 py-3 text-sm">India</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div className="flex items-center justify-between border-t px-4 py-2">
-                  <p className="text-sm text-muted-foreground">
-                    Showing 3 transactions
-                  </p>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      disabled
-                    >
-                      <span>1</span>
-                    </Button>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <span>2</span>
-                    </Button>
-                  </div>
-                </div>
+                <DataTable
+                  columns={transactionColumns}
+                  data={transactionData}
+                  rowActions={[
+                    {
+                      label: "View Details",
+                      onClick: (transaction: Transaction) =>
+                        setSelectedTransaction(transaction),
+                    },
+                  ]}
+                  className="[&_tr]:cursor-pointer"
+                  striped
+                />
               </CardContent>
             </Card>
             <Card>
@@ -773,120 +769,23 @@ export default function CaseDetailPage() {
                     </TabsList>
                   </div>{" "}
                   <TabsContent value="comments" className="p-0">
-                    <div className="overflow-x-auto h-[300px]">
-                      <table className="w-full relative">
-                        <thead>
-                          <tr className="border-b bg-muted/50">
-                            <th className="px-4 py-3 text-left text-sm font-medium">
-                              Datetime
-                            </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium">
-                              User ID
-                            </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium">
-                              Header
-                            </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium">
-                              Comment
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {commentsData?.data?.map((comment: Comment) => (
-                            <tr key={comment.id} className="border-b">
-                              <td className="px-4 py-3 text-sm">
-                                {new Date(comment.createdAt).toLocaleString()}
-                              </td>
-                              <td className="px-4 py-3 text-sm">
-                                user.{comment.authorId}
-                              </td>
-                              <td className="px-4 py-3 text-sm whitespace-nowrap">
-                                <Badge
-                                  variant="outline"
-                                  className={
-                                    comment.header === "Investigation"
-                                      ? "bg-blue-50"
-                                      : comment.header === "Customer Contact"
-                                      ? "bg-purple-50"
-                                      : comment.header === "Resolution"
-                                      ? "bg-green-50"
-                                      : "bg-gray-50"
-                                  }
-                                >
-                                  {comment.header}
-                                </Badge>
-                              </td>
-                              <td className="px-4 py-3 text-sm">
-                                {comment.content}
-                              </td>
-                            </tr>
-                          )) || (
-                            <tr>
-                              <td
-                                colSpan={4}
-                                className="px-4 py-8 text-center text-muted-foreground"
-                              >
-                                {commentsLoading
-                                  ? "Loading comments..."
-                                  : "No comments available"}
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                    <div className="h-[300px]">
+                      <DataTable
+                        columns={commentsColumns}
+                        data={commentsData?.data || []}
+                        loading={commentsLoading}
+                        emptyText="No comments available"
+                        maxHeight="300px"
+                      />
                     </div>
-                  </TabsContent>
+                  </TabsContent>{" "}
                   <TabsContent value="audit" className="p-0">
-                    <div className="overflow-auto h-[300px]">
-                      <table className="w-full relative">
-                        <thead>
-                          <tr className="border-b bg-muted/50">
-                            <th className="px-4 py-3 text-left text-sm font-medium">
-                              Datetime
-                            </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium">
-                              User ID
-                            </th>
-                            <th className="px-4 py-3 text-left text-sm font-medium">
-                              Action
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="border-b">
-                            <td className="px-4 py-3 text-sm">
-                              2023-05-20 09:30
-                            </td>
-                            <td className="px-4 py-3 text-sm">system</td>
-                            <td className="px-4 py-3 text-sm">Case created</td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="px-4 py-3 text-sm">
-                              2023-05-20 09:30
-                            </td>
-                            <td className="px-4 py-3 text-sm">system</td>
-                            <td className="px-4 py-3 text-sm">
-                              Assigned to john.doe
-                            </td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="px-4 py-3 text-sm">
-                              2023-05-20 09:35
-                            </td>
-                            <td className="px-4 py-3 text-sm">john.doe</td>
-                            <td className="px-4 py-3 text-sm">
-                              Status changed to WIP
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="px-4 py-3 text-sm">
-                              2023-05-22 14:45
-                            </td>
-                            <td className="px-4 py-3 text-sm">jane.smith</td>
-                            <td className="px-4 py-3 text-sm">Comment added</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <div className="h-[300px]">
+                      <DataTable
+                        columns={auditColumns}
+                        data={auditData}
+                        maxHeight="300px"
+                      />
                     </div>
                   </TabsContent>
                 </Tabs>

@@ -39,7 +39,6 @@ function getFilterTitle(filter: StatusFilter) {
 
 export function DashboardCaseList({
   listData,
-  loading,
   statusFilter,
   primaryFilter,
   pagination,

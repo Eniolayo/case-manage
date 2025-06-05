@@ -27,7 +27,44 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/page-header";
+import { DataTable } from "@/components/data-table";
+import type { Column } from "@/components/data-table";
 import type { LinkedCase } from "@/lib/api-types";
+
+// Link history data type and columns
+type LinkHistoryEntry = {
+  id: string;
+  date: string;
+  action: string;
+  caseId: number;
+  userId: string;
+  reason: string;
+};
+
+const linkHistoryColumns: Column<LinkHistoryEntry>[] = [
+  {
+    key: "date",
+    title: "Date",
+    sortable: true,
+  },
+  {
+    key: "action",
+    title: "Action",
+  },
+  {
+    key: "caseId",
+    title: "Case ID",
+    render: (value) => `Case - ${value}`,
+  },
+  {
+    key: "userId",
+    title: "User",
+  },
+  {
+    key: "reason",
+    title: "Reason",
+  },
+];
 
 export default function LinkedCasesPage() {
   const { id } = useParams();
@@ -36,9 +73,19 @@ export default function LinkedCasesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [linkCaseId, setLinkCaseId] = useState("");
   const [linkReason, setLinkReason] = useState("");
-
   // Get the case details including linked cases
   const { data: caseData, isLoading } = useCase(caseId);
+
+  // Generate link history data from linked cases
+  const linkHistoryData: LinkHistoryEntry[] =
+    caseData?.linkedCases?.map((linkedCase: LinkedCase) => ({
+      id: linkedCase.id.toString(),
+      date: new Date(linkedCase.linkedAt).toLocaleDateString(),
+      action: "Linked",
+      caseId: linkedCase.id,
+      userId: `User ${linkedCase.id}`, // Using case ID as placeholder user
+      reason: "Related fraud investigation",
+    })) || [];
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -138,7 +185,6 @@ export default function LinkedCasesPage() {
               </TabsTrigger>
               <TabsTrigger value="history">Link History</TabsTrigger>
             </TabsList>
-
             <TabsContent value="active">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {isLoading ? (
@@ -270,66 +316,16 @@ export default function LinkedCasesPage() {
                   </div>
                 )}
               </div>
-            </TabsContent>
-
+            </TabsContent>{" "}
             <TabsContent value="history">
               <Card>
                 <CardContent className="p-0">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="px-4 py-3 text-left text-sm font-medium">
-                            Date
-                          </th>
-                          <th className="px-4 py-3 text-left text-sm font-medium">
-                            Action
-                          </th>
-                          <th className="px-4 py-3 text-left text-sm font-medium">
-                            Case ID
-                          </th>
-                          <th className="px-4 py-3 text-left text-sm font-medium">
-                            User
-                          </th>
-                          <th className="px-4 py-3 text-left text-sm font-medium">
-                            Reason
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {caseData?.linkedCases?.map(
-                          (linkedCase: LinkedCase) => {
-                            const linkedDate = new Date(linkedCase.linkedAt);
-                            const { data: linkedCaseDetails } = useCase(
-                              linkedCase.id
-                            );
-
-                            if (!linkedCaseDetails) return null;
-
-                            return (
-                              <tr key={linkedCase.id} className="border-b">
-                                <td className="px-4 py-3 text-sm">
-                                  {linkedDate.toLocaleDateString()}
-                                </td>
-                                <td className="px-4 py-3 text-sm">Linked</td>
-                                <td className="px-4 py-3 text-sm">
-                                  Case - {linkedCase.id}
-                                </td>
-                                <td className="px-4 py-3 text-sm">
-                                  {linkedCaseDetails.assignedTo
-                                    ? `User ${linkedCaseDetails.assignedTo}`
-                                    : "Unassigned"}
-                                </td>
-                                <td className="px-4 py-3 text-sm">
-                                  Related fraud investigation
-                                </td>
-                              </tr>
-                            );
-                          }
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                  <DataTable
+                    columns={linkHistoryColumns}
+                    data={linkHistoryData}
+                    loading={isLoading}
+                    emptyText="No link history available"
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
