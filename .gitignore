@@ -27,6 +27,6 @@ yarn-error.log*
 next-env.d.ts
 
 /venv
-dummy_server.py
-requirements.txt
+# dummy_server.py
+# requirements.txt
 README (1).md
