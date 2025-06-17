@@ -130,7 +130,7 @@ export function Sidebar() {
   const SidebarContent = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
       {/* Logo */}
-      <div className="flex h-16 items-center  px-3 border-b border-gray-700">
+      <div className="flex h-16 items-center  px-3">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex h-20 items-center justify-center">
             <BureauLogo />
@@ -150,8 +150,8 @@ export function Sidebar() {
               className={cn(
                 "flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors group relative",
                 isActive
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-300 hover:bg-gray-800 hover:text-white",
+                  ? "bg-accent text-accent-foreground"
+                  : "text-accent-foreground/80 hover:text-foreground",
                 isCollapsed ? "md:justify-center" : "md:justify-between"
               )}
             >
@@ -162,7 +162,7 @@ export function Sidebar() {
               {item.badge && (!isCollapsed || isMobile) && (
                 <Badge
                   variant="secondary"
-                  className="bg-gray-700 text-gray-200"
+                  className="bg-black text-gray-200 hover:bg-black hover:text-gray-200"
                 >
                   {item.badge}
                 </Badge>
@@ -184,7 +184,7 @@ export function Sidebar() {
                     {item.badge && (
                       <Badge
                         variant="secondary"
-                        className="bg-gray-700 text-gray-200"
+                        className="bg-text-black text-gray-200"
                       >
                         {item.badge}
                       </Badge>
@@ -200,16 +200,14 @@ export function Sidebar() {
       </nav>
 
       {/* User section */}
-      <div className="border-t border-gray-700 p-4">
+      <div className="border-t border-gray-300 p-4">
         <div className="flex items-center gap-3 mb-3">
-          <div className="flex items-center justify-center w-8 h-8 bg-gray-700 rounded-full flex-shrink-0">
+          <div className="flex items-center justify-center w-8 h-8 bg-white text-gray-700 rounded-full flex-shrink-0">
             <User className="h-4 w-4" />
           </div>
           {(!isCollapsed || isMobile) && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">
-                John Doe
-              </p>
+              <p className="text-sm font-medium truncate">John Doe</p>
               <p className="text-xs text-gray-400 truncate">Supervisor</p>
             </div>
           )}
@@ -224,7 +222,7 @@ export function Sidebar() {
                   className="text-gray-300 hover:bg-gray-800 hover:text-white w-8 h-8 p-0"
                   onClick={handleLogout}
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-4 w-4 text-black" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent
@@ -238,10 +236,10 @@ export function Sidebar() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-300 hover:bg-gray-800 hover:text-white w-full justify-start"
+              className=" w-full justify-start"
               onClick={handleLogout}
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-4 w-4 text-black" />
               {(!isCollapsed || isMobile) && (
                 <span className="ml-2">Sign out</span>
               )}
@@ -257,7 +255,7 @@ export function Sidebar() {
       {/* Desktop Sidebar */}
       <div
         className={cn(
-          "hidden md:flex fixed inset-y-0 overflow-x-hidden flex-col left-0 h-dvh overflow-y-auto z-50 bg-gray-900 text-white transition-all duration-300",
+          "hidden md:flex fixed inset-y-0 overflow-x-hidden flex-col left-0 h-dvh overflow-y-auto z-50  transition-all duration-300",
           isCollapsed ? "w-16" : "w-64"
         )}
       >
@@ -269,7 +267,7 @@ export function Sidebar() {
             <Button
               variant="ghost"
               size="sm"
-              className="absolute right-3 top-14 h-6 w-6 rounded-full bg-gray-800 text-white border border-gray-600"
+              className="absolute right-3 top-14 h-6 w-6 rounded-full "
               onClick={() => setIsCollapsed(!isCollapsed)}
             >
               {isCollapsed ? (
@@ -281,7 +279,7 @@ export function Sidebar() {
           </TooltipTrigger>
           <TooltipContent
             side="right"
-            className="bg-gray-800 text-white border-gray-700"
+            className="text-popover-foreground shadow-md outline-none text-xs border bg-popover"
           >
             {isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           </TooltipContent>
@@ -302,7 +300,7 @@ export function Sidebar() {
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="w-64 p-0 bg-gray-900 text-white border-gray-700"
+          className="w-64 p-0 text-gray-900 bg-white border-gray-700"
         >
           <div className="flex h-full flex-col">
             <SidebarContent isMobile={true} />
