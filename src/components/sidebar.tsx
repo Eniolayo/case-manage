@@ -177,14 +177,14 @@ export function Sidebar() {
                 <TooltipTrigger asChild>{navigationItem}</TooltipTrigger>
                 <TooltipContent
                   side="right"
-                  className="bg-gray-800 text-white border-gray-700"
+                  className="text-gray-800 bg-white border-none"
                 >
-                  <div className="flex items-center gap-2">
-                    <span>{item.name}</span>
+                  <div className="flex  items-center gap-2">
+                    <span className="text-xs">{item.name}</span>
                     {item.badge && (
                       <Badge
                         variant="secondary"
-                        className="bg-text-black text-gray-200"
+                        className="bg-black text-xs text-gray-200 hover:bg-black hover:text-gray-200"
                       >
                         {item.badge}
                       </Badge>

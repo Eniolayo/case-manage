@@ -30,3 +30,5 @@ next-env.d.ts
 # dummy_server.py
 # requirements.txt
 README (1).md
+
+.vercel

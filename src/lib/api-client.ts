@@ -2,7 +2,8 @@ import axios from "axios";
 
 // Create axios instance with base configuration
 export const apiClient = axios.create({
-  baseURL: "http://localhost:13000",
+  baseURL: "https://ayodeji.pythonanywhere.com/",
+  // baseURL: "http://localhost:13000",
   // baseURL: "https://api.frm.com/v1",
   timeout: 10000,
   headers: {

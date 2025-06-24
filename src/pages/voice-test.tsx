@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Mic, Download, Play, Trash2 } from "lucide-react";
+import { formatDateTime } from "@/lib/date-utils";
 
 interface Recording {
   id: string;
@@ -162,7 +163,7 @@ export function VoiceTestPage() {
                           {formatDuration(recording.duration)}
                         </Badge>
                         <span className="text-sm text-muted-foreground">
-                          {recording.timestamp.toLocaleString()}
+                          {formatDateTime(recording.timestamp)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">

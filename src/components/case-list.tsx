@@ -62,9 +62,6 @@ export function CaseList({ cases, showAssignToMe = true }: CaseListProps) {
       responsive: { hidden: "lg" },
       sortable: true,
       render: (value) => {
-        // Format the date if it's a valid date string
-        console.log("Created value:", value);
-
         return <span className="whitespace-nowrap">{value}</span>;
       },
     },

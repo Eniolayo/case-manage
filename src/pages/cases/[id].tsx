@@ -60,6 +60,7 @@ import {
   useCustomer,
 } from "@/hooks/use-api";
 import type { Comment, LinkedCase } from "@/lib/api-types";
+import { formatDateTime } from "@/lib/date-utils";
 
 type Transaction = {
   id: string;
@@ -78,7 +79,7 @@ type Transaction = {
 const transactionData: Transaction[] = [
   {
     id: "TXN123456789",
-    date: "2023-05-20 08:45",
+    date: "05/20/2023 08:45:00 AM",
     amount: 1250.0,
     status: "Pending",
     fraudSeverity: "High",
@@ -90,7 +91,7 @@ const transactionData: Transaction[] = [
   },
   {
     id: "TXN123456790",
-    date: "2023-05-20 08:47",
+    date: "05/20/2023 08:47:00 AM",
     amount: 750.0,
     status: "Pending",
     fraudSeverity: "High",
@@ -102,7 +103,7 @@ const transactionData: Transaction[] = [
   },
   {
     id: "TXN123456788",
-    date: "2023-05-19 14:30",
+    date: "05/19/2023 02:30:00 PM",
     amount: 45.0,
     status: "Genuine",
     fraudSeverity: "Low",
@@ -178,7 +179,7 @@ const commentsColumns: Column<Comment>[] = [
     key: "createdAt",
     title: "Datetime",
     sortable: true,
-    render: (value) => new Date(value).toLocaleString(),
+    render: (value) => formatDateTime(value),
   },
   {
     key: "authorId",
@@ -222,25 +223,25 @@ type AuditEntry = {
 const auditData: AuditEntry[] = [
   {
     id: "1",
-    datetime: "2023-05-20 09:30",
+    datetime: "05/20/2023 09:30:00 AM",
     userId: "system",
     action: "Case created",
   },
   {
     id: "2",
-    datetime: "2023-05-20 09:30",
+    datetime: "05/20/2023 09:30:00 AM",
     userId: "system",
     action: "Assigned to john.doe",
   },
   {
     id: "3",
-    datetime: "2023-05-20 09:35",
+    datetime: "05/20/2023 09:35:00 AM",
     userId: "john.doe",
     action: "Status changed to WIP",
   },
   {
     id: "4",
-    datetime: "2023-05-22 14:45",
+    datetime: "05/22/2023 02:45:00 PM",
     userId: "jane.smith",
     action: "Comment added",
   },
@@ -565,9 +566,7 @@ export default function CaseDetailPage() {
                     </Label>
                     <div className="flex items-center gap-1">
                       <p className="font-medium">
-                        {new Date(caseData.createdAt).toLocaleDateString()}{" "}
-                        <br />
-                        {new Date(caseData.createdAt).toLocaleTimeString()}
+                        {formatDateTime(caseData.createdAt)}
                       </p>
                     </div>
                   </div>
@@ -577,7 +576,7 @@ export default function CaseDetailPage() {
                     </Label>{" "}
                     <p className="font-medium">
                       {caseData.status === "RESOLVED"
-                        ? new Date(caseData.updatedAt).toLocaleDateString()
+                        ? formatDateTime(caseData.updatedAt)
                         : "-"}
                     </p>
                   </div>
@@ -943,7 +942,7 @@ export default function CaseDetailPage() {
                             Related fraud investigation
                           </p>
                           <span className="text-xs text-muted-foreground">
-                            {new Date(linkedCase.linkedAt).toLocaleDateString()}
+                            {formatDateTime(linkedCase.linkedAt)}
                           </span>
                         </div>
                       </Link>

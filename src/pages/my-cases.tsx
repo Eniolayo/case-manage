@@ -13,6 +13,7 @@ import { CaseList } from "@/components/case-list";
 import { PaginationControls } from "@/components/pagination-controls";
 import { useCases } from "@/hooks/use-api";
 import { CaseStatus, CaseSummary } from "@/lib/api-types";
+import { formatDateTime } from "@/lib/date-utils";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -57,7 +58,7 @@ export default function MyCasesPage() {
     status: case_.status,
     priority: case_.priority.toLowerCase() as "high" | "medium" | "low",
     assignee: case_.assignedTo ? `User ${case_.assignedTo}` : "Unassigned",
-    created: new Date(case_.createdAt).toLocaleString(),
+    created: formatDateTime(case_.createdAt),
     cardType: "DEBIT_CARD", // This would come from the API in a real app
   }));
 

@@ -30,6 +30,7 @@ import { PageHeader } from "@/components/page-header";
 import { DataTable } from "@/components/data-table";
 import type { Column } from "@/components/data-table";
 import type { LinkedCase } from "@/lib/api-types";
+import { formatDateTime } from "@/lib/date-utils";
 
 // Link history data type and columns
 type LinkHistoryEntry = {
@@ -80,7 +81,7 @@ export default function LinkedCasesPage() {
   const linkHistoryData: LinkHistoryEntry[] =
     caseData?.linkedCases?.map((linkedCase: LinkedCase) => ({
       id: linkedCase.id.toString(),
-      date: new Date(linkedCase.linkedAt).toLocaleDateString(),
+      date: formatDateTime(linkedCase.linkedAt),
       action: "Linked",
       caseId: linkedCase.id,
       userId: `User ${linkedCase.id}`, // Using case ID as placeholder user
@@ -251,7 +252,7 @@ export default function LinkedCasesPage() {
                                 Created:
                               </span>
                               <span className="text-sm">
-                                {createdDate.toLocaleDateString()}
+                                {formatDateTime(linkedCaseDetails.createdAt)}
                               </span>
                             </div>
                             <div className="flex justify-between">
@@ -280,7 +281,7 @@ export default function LinkedCasesPage() {
                                 Linked on:
                               </span>
                               <span className="text-sm">
-                                {linkedDate.toLocaleDateString()}
+                                {formatDateTime(linkedCase.linkedAt)}
                               </span>
                             </div>
                             <div className="mt-2">

@@ -14,6 +14,7 @@ import { CaseListSkeleton } from "@/components/skeleton-loaders";
 import { PaginationControls } from "@/components/pagination-controls";
 import { useCases } from "@/hooks/use-api";
 import type { CaseSummary, CaseStatus } from "@/lib/api-types";
+import { formatDateTime } from "@/lib/date-utils";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -57,7 +58,7 @@ export default function AllCasesPage() {
       status: case_.status,
       priority: case_.priority.toLowerCase() as "high" | "medium" | "low",
       assignee: case_.assignedTo ? `User ${case_.assignedTo}` : "Unassigned",
-      created: new Date(case_.createdAt).toLocaleString(),
+      created: formatDateTime(case_.createdAt),
       cardType: "DEBIT_CARD", // Default since not available in summary
     }));
   };

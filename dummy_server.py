@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # Enable CORS for all domains and routes
-CORS(app, origins=["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000", "http://127.0.0.1:5173"])
+CORS(app, origins=["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000", "http://127.0.0.1:5173","https://case-management.d3ilu3opuyh91j.amplifyapp.com"])
 
 # Helper functions for generating dummy data
 def generate_timestamp() -> int:
