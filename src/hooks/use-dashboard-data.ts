@@ -7,6 +7,7 @@ import {
   DashboardListData,
 } from "@/types/dashboard";
 import { useCases } from "@/hooks/use-api";
+import { formatDateTime } from "@/lib/date-utils";
 
 interface DashboardDataHookResult {
   stats: DashboardStats;
@@ -113,7 +114,8 @@ export function useDashboardData(): DashboardDataHookResult {
         status: item.status,
         priority: item.priority.toLowerCase() as "high" | "medium" | "low",
         assignee: item.assignedTo?.toString() || "",
-        created: new Date(item.createdAt).toISOString(),
+        created: new Date(item.createdAt).toISOString(), // Keep original for sorting/filtering
+        createdDisplay: formatDateTime(item.createdAt), // Formatted for display
         cardType: "ALL",
       })
     );

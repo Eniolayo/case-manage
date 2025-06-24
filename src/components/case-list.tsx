@@ -9,6 +9,7 @@ type Case = {
   priority: "high" | "medium" | "low";
   assignee: string;
   created: string;
+  createdDisplay?: string; // Optional formatted display version
   cardType?: string;
 };
 
@@ -61,8 +62,10 @@ export function CaseList({ cases, showAssignToMe = true }: CaseListProps) {
       title: "Created",
       responsive: { hidden: "lg" },
       sortable: true,
-      render: (value) => {
-        return <span className="whitespace-nowrap">{value}</span>;
+      render: (value, record) => {
+        // Use createdDisplay if available, otherwise use the original created value
+        const displayValue = record.createdDisplay || value;
+        return <span className="whitespace-nowrap">{displayValue}</span>;
       },
     },
   ];

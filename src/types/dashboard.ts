@@ -36,5 +36,6 @@ export interface DashboardListData {
   priority: "high" | "medium" | "low";
   assignee: string;
   created: string;
+  createdDisplay?: string; // Optional formatted display version
   cardType: FilterType;
 }
