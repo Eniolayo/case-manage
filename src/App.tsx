@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/auth-provider";
 import { QueryProvider } from "@/components/query-provider";
 import { SidebarProvider } from "@/components/sidebar";
+import { Toaster } from "@/components/ui/toaster";
 import Layout from "@/components/Layout";
 import LoginPage from "@/pages/login";
 import HomePage from "@/pages/home";
@@ -44,6 +45,7 @@ function App() {
             </SidebarProvider>
           </AuthProvider>
         </ThemeProvider>
+        <Toaster />
       </QueryProvider>
     </BrowserRouter>
   );

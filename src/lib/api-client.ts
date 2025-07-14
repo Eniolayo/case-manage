@@ -2,8 +2,8 @@ import axios from "axios";
 
 // Create axios instance with base configuration
 export const apiClient = axios.create({
-  baseURL: "https://ayodeji.pythonanywhere.com/",
-  // baseURL: "http://localhost:13000",
+  baseURL:
+    "https://4n2msuk2efudngqc4xpfhw2exm0fkpmo.lambda-url.ap-south-1.on.aws",
   // baseURL: "https://api.frm.com/v1",
   timeout: 10000,
   headers: {

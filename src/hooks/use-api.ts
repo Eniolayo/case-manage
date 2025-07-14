@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { casesApi, alertsApi, customersApi } from "@/lib/api";
+import { casesApi, alertsApi, customersApi, configApi } from "@/lib/api";
+import { MOCK_EVIDENCE_CONFIG, MOCK_SOURCE_CONFIG } from "@/lib/mock-data";
 import type {
   CaseListParams,
   CommentListParams,
@@ -33,6 +34,23 @@ export const queryKeys = {
   customers: {
     all: ["customers"] as const,
     detail: (id: number) => [...queryKeys.customers.all, "detail", id] as const,
+  },
+  config: {
+    all: ["config"] as const,
+    evidences: {
+      all: () => [...queryKeys.config.all, "evidences"] as const,
+      list: (sourceSystem: string, evidenceType: string) =>
+        [
+          ...queryKeys.config.evidences.all(),
+          sourceSystem,
+          evidenceType,
+        ] as const,
+    },
+    sources: {
+      all: () => [...queryKeys.config.all, "sources"] as const,
+      list: (sourceSystem: string) =>
+        [...queryKeys.config.sources.all(), sourceSystem] as const,
+    },
   },
 } as const;
 
@@ -123,6 +141,48 @@ export const useCustomer = (id: number) => {
   return useQuery({
     queryKey: queryKeys.customers.detail(id),
     queryFn: () => customersApi.getById(id),
-    enabled: !!id,
+    enabled: id > 0,
+  });
+};
+
+// Config hooks - using mock data until APIs are deployed
+export const useEvidenceConfig = (
+  sourceSystem: string,
+  evidenceType: string,
+  enabled: boolean = true
+) => {
+  return useQuery({
+    queryKey: queryKeys.config.evidences.list(sourceSystem, evidenceType),
+    queryFn: async () => {
+      // Using mock data for now - replace with real API call when ready
+      // return configApi.getEvidenceConfig(sourceSystem, evidenceType);
+
+      // Simulate API delay for realism
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return MOCK_EVIDENCE_CONFIG;
+    },
+    enabled: enabled && !!sourceSystem && !!evidenceType,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
+  });
+};
+
+export const useSourceConfig = (
+  sourceSystem: string,
+  enabled: boolean = true
+) => {
+  return useQuery({
+    queryKey: queryKeys.config.sources.list(sourceSystem),
+    queryFn: async () => {
+      // Using mock data for now - replace with real API call when ready
+      // return configApi.getSourceConfig(sourceSystem);
+
+      // Simulate API delay for realism
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return MOCK_SOURCE_CONFIG;
+    },
+    enabled: enabled && !!sourceSystem,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
   });
 };

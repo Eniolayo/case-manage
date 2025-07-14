@@ -198,3 +198,104 @@ export interface Transaction {
   createdAt: number;
   details: TransactionDetail;
 }
+
+// External link configuration types
+export interface ExternalLinkConfig {
+  url_template: string;
+  display_name: string;
+  icon?: string;
+  open_in_new_tab: boolean;
+}
+
+export interface EvidenceConfig {
+  id: number;
+  source_system: string;
+  evidence_type: string;
+  external_link_config?: ExternalLinkConfig;
+  evidence_schema: Record<string, any>;
+  ui_config: Record<string, any>;
+}
+
+export interface EvidenceConfigResponse {
+  data: EvidenceConfig[];
+}
+
+export interface SourceConfig {
+  id: number;
+  source_system: string;
+  entity_type: string;
+  external_link_config?: {
+    customer_portal_url: string;
+    display_name: string;
+    open_in_new_tab: boolean;
+  };
+  ui_config: Array<{
+    path: string;
+    field: string;
+    display_text: string;
+    component_type: string;
+  }>;
+  source_api: {
+    url: string;
+    headers: Record<string, any>;
+    query_params: Record<string, any>;
+    response_schema: Record<string, any>;
+  };
+}
+
+export interface SourceConfigResponse {
+  data: SourceConfig[];
+}
+
+// Generic Evidence types for case management system
+export type EvidenceType =
+  | "transaction"
+  | "alert"
+  | "kyc_document"
+  | "aml_screening"
+  | "device_fingerprint"
+  | "behavioral_analysis";
+export type EvidenceStatus =
+  | "flagged"
+  | "cleared"
+  | "pending"
+  | "reviewed"
+  | "escalated";
+export type RiskLevel = "High" | "Medium" | "Low" | "Critical";
+
+export interface RuleFlagged {
+  id?: string;
+  title: string;
+  description?: string;
+  expression?: string;
+}
+
+export interface EvaluationSummary {
+  id?: string;
+  title: string;
+  description?: string;
+  expression?: string;
+  flagged: boolean;
+  isExecuted: boolean;
+}
+
+export interface Evidence {
+  id: string;
+  evidence_type: EvidenceType;
+  source_system: string;
+  created_at: string;
+  updated_at: string;
+  status: EvidenceStatus;
+  risk_level: RiskLevel;
+  title: string;
+  description: string;
+  linked_at: string;
+  // Real evidence structure based on RealEvidenceConfig
+  payload: {
+    data: Record<string, any>;
+  };
+  rulesFlagged: RuleFlagged[];
+  evaluationSummary: EvaluationSummary[];
+  action: string;
+  receivedAt?: number;
+}

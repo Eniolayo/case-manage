@@ -1,0 +1,2194 @@
+{
+	"info": {
+		"_postman_id": "a0081494-d5d0-40e5-959a-447aa82c5872",
+		"name": "Case Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42570985",
+		"_collection_link": "https://crimson-comet-468272.postman.co/workspace/Overwatch~b40313de-345c-4a4f-93af-fa83d95dc3c2/collection/42418208-a0081494-d5d0-40e5-959a-447aa82c5872?action=share&source=collection_link&creator=42570985"
+	},
+	"item": [
+		{
+			"name": "Cases",
+			"item": [
+				{
+					"name": "Ping",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 3,\n    \"isVerified\": \"true\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_cases}}/api/cases/ping",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_cases}}",
+							"path": [
+								"api",
+								"cases",
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Case",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"source_system\": \"FRM\",\n    \"entity_id\": \"card-token-12345\",\n    \"entity_type\": \"card\",\n    \"customer_id\": \"cust-12345\",\n    \"status\": \"New\",\n    \"priority\": \"High\",\n    \"metadata\": {\n        \"alert_id\": \"alert_xyz_789\"\n    },\n    \"initial_evidence\": [\n        {\n            \"evidence_type\": \"transaction\",\n            \"evidence_id\": \"b6SJt3bNSY62AHyYYPxJPf\",\n            \"data\": {\n                \"id\": \"b6SJt3bNSY62AHyYYPxJPf\",\n                \"payload\": {\n                    \"data\": {\n                        \"account_balance\": 10000,\n                        \"account_id\": \"acc_789\",\n                        \"account_type\": \"SAVINGS\",\n                        \"card_masked\": true,\n                        \"card_number\": \"4111111111111111\",\n                        \"card_type\": \"CREDIT\",\n                        \"count_txn_id_1d\": 5,\n                        \"counter_partyid\": \"cp_303\",\n                        \"wallet_id\": \"wallet_123\"\n                    }\n                },\n                \"rulesFlagged\": [\n                    {\n                        \"id\": \"1920386885251764224\",\n                        \"title\": \"Insufficient wallet balance\",\n                        \"description\": \"Transaction type is WALLET and transaction amount is greater than wallet balance\",\n                        \"expression\": \"txn_type == 'WALLET' && txn_amount > wallet_balance\"\n                    }\n                ],\n                \"evaluationSummary\": [\n                    {\n                        \"id\": \"1920386885251764224\",\n                        \"title\": \"Insufficient wallet balance\",\n                        \"description\": \"Transaction type is WALLET and transaction amount is greater than wallet balance\",\n                        \"expression\": \"txn_type == 'WALLET' && txn_amount > wallet_balance\",\n                        \"flagged\": true,\n                        \"isExecuted\": true\n                    }\n                ],\n                \"action\": \"DECLINE\",\n                \"receivedAt\": 1751344037,\n                \"createdAt\": 1751344037,\n                \"updatedAt\": 1751344037\n            },\n            \"linked_at\":\"{{$isoTimestamp}}\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_cases}}/api/cases",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_cases}}",
+							"path": [
+								"api",
+								"cases"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"source_system\": \"FRM\",\n    \"entity_id\": \"card-token-12345\",\n    \"entity_type\": \"card\",\n    \"customer_id\": \"cust-12345\",\n    \"status\": \"New\",\n    \"priority\": \"High\",\n    \"metadata\": {\n        \"alert_id\": \"alert_xyz_789\"\n    },\n    \"initial_evidence\": [\n        {\n            \"evidence_type\": \"transaction\",\n            \"evidence_id\": \"b6SJt3bNSY62AHyYYPxJPf\",\n            \"data\": {\n                \"id\": \"b6SJt3bNSY62AHyYYPxJPf\",\n                \"payload\": {\n                    \"data\": {\n                        \"account_balance\": 10000,\n                        \"account_id\": \"acc_789\",\n                        \"account_type\": \"SAVINGS\",\n                        \"card_masked\": true,\n                        \"card_number\": \"4111111111111111\",\n                        \"card_type\": \"CREDIT\",\n                        \"count_txn_id_1d\": 5,\n                        \"counter_partyid\": \"cp_303\",\n                        \"wallet_id\": \"wallet_123\"\n                    }\n                },\n                \"rulesFlagged\": [\n                    {\n                        \"id\": \"1920386885251764224\",\n                        \"title\": \"Insufficient wallet balance\",\n                        \"description\": \"Transaction type is WALLET and transaction amount is greater than wallet balance\",\n                        \"expression\": \"txn_type == 'WALLET' && txn_amount > wallet_balance\"\n                    }\n                ],\n                \"evaluationSummary\": [\n                    {\n                        \"id\": \"1920386885251764224\",\n                        \"title\": \"Insufficient wallet balance\",\n                        \"description\": \"Transaction type is WALLET and transaction amount is greater than wallet balance\",\n                        \"expression\": \"txn_type == 'WALLET' && txn_amount > wallet_balance\",\n                        \"flagged\": true,\n                        \"isExecuted\": true\n                    }\n                ],\n                \"action\": \"DECLINE\",\n                \"receivedAt\": 1751344037,\n                \"createdAt\": 1751344037,\n                \"updatedAt\": 1751344037\n            },\n            \"linked_at\":\"{{$isoTimestamp}}\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_cases}}/api/cases",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_cases}}",
+									"path": [
+										"api",
+										"cases"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 07 Jul 2025 17:16:21 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1416"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 5,\n    \"source_system\": \"FRM\",\n    \"entity_id\": \"card-token-12345\",\n    \"entity_type\": \"card\",\n    \"customer_id\": \"cust-12345\",\n    \"assigned_to\": null,\n    \"status\": \"New\",\n    \"priority\": \"High\",\n    \"resolution_type\": \"\",\n    \"initial_evidence\": [\n        {\n            \"evidence_type\": \"transaction\",\n            \"evidence_id\": \"b6SJt3bNSY62AHyYYPxJPf\",\n            \"data\": {\n                \"action\": \"DECLINE\",\n                \"createdAt\": 1751344037,\n                \"evaluationSummary\": [\n                    {\n                        \"description\": \"Transaction type is WALLET and transaction amount is greater than wallet balance\",\n                        \"expression\": \"txn_type == 'WALLET' && txn_amount > wallet_balance\",\n                        \"flagged\": true,\n                        \"id\": \"1920386885251764224\",\n                        \"isExecuted\": true,\n                        \"title\": \"Insufficient wallet balance\"\n                    }\n                ],\n                \"id\": \"b6SJt3bNSY62AHyYYPxJPf\",\n                \"payload\": {\n                    \"data\": {\n                        \"account_balance\": 10000,\n                        \"account_id\": \"acc_789\",\n                        \"account_type\": \"SAVINGS\",\n                        \"card_masked\": true,\n                        \"card_number\": \"4111111111111111\",\n                        \"card_type\": \"CREDIT\",\n                        \"count_txn_id_1d\": 5,\n                        \"counter_partyid\": \"cp_303\",\n                        \"wallet_id\": \"wallet_123\"\n                    }\n                },\n                \"receivedAt\": 1751344037,\n                \"rulesFlagged\": [\n                    {\n                        \"description\": \"Transaction type is WALLET and transaction amount is greater than wallet balance\",\n                        \"expression\": \"txn_type == 'WALLET' && txn_amount > wallet_balance\",\n                        \"id\": \"1920386885251764224\",\n                        \"title\": \"Insufficient wallet balance\"\n                    }\n                ],\n                \"updatedAt\": 1751344037\n            },\n            \"linked_at\": \"2025-07-07T17:16:21.426Z\"\n        }\n    ],\n    \"additional_evidence\": null,\n    \"linked_cases\": null,\n    \"metadata\": {\n        \"alert_id\": \"alert_xyz_789\"\n    },\n    \"created_at\": \"2025-07-07T17:16:21.464404Z\",\n    \"updated_at\": \"2025-07-07T17:16:21.464404Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch Cases",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_cases}}/api/cases",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_cases}}",
+							"path": [
+								"api",
+								"cases"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_cases}}/api/cases",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_cases}}",
+									"path": [
+										"api",
+										"cases"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 07 Jul 2025 17:21:45 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1050"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 5,\n            \"source_system\": \"FRM\",\n            \"entity_id\": \"card-token-12345\",\n            \"entity_type\": \"card\",\n            \"customer_id\": \"cust-12345\",\n            \"assigned_to\": null,\n            \"status\": \"New\",\n            \"priority\": \"High\",\n            \"created_at\": \"2025-07-07T22:46:21.464404+05:30\",\n            \"updated_at\": \"2025-07-07T22:46:21.464404+05:30\"\n        },\n        {\n            \"id\": 4,\n            \"source_system\": \"FRM\",\n            \"entity_id\": \"card-token-12345\",\n            \"entity_type\": \"card\",\n            \"customer_id\": \"cust-12345\",\n            \"assigned_to\": null,\n            \"status\": \"New\",\n            \"priority\": \"High\",\n            \"created_at\": \"2025-07-07T22:44:36.686661+05:30\",\n            \"updated_at\": \"2025-07-07T22:44:36.686661+05:30\"\n        },\n        {\n            \"id\": 3,\n            \"source_system\": \"FRM\",\n            \"entity_id\": \"card-token-12345\",\n            \"entity_type\": \"card\",\n            \"customer_id\": \"cust-12345\",\n            \"assigned_to\": null,\n            \"status\": \"New\",\n            \"priority\": \"High\",\n            \"created_at\": \"2025-07-07T22:31:30.848396+05:30\",\n            \"updated_at\": \"2025-07-07T22:31:30.848396+05:30\"\n        },\n        {\n            \"id\": 2,\n            \"source_system\": \"FRM\",\n            \"entity_id\": \"card-token-12345\",\n            \"entity_type\": \"card\",\n            \"customer_id\": \"cust-12345\",\n            \"assigned_to\": null,\n            \"status\": \"New\",\n            \"priority\": \"High\",\n            \"created_at\": \"2025-07-07T22:27:59.39719+05:30\",\n            \"updated_at\": \"2025-07-07T22:27:59.39719+05:30\"\n        }\n    ],\n    \"total\": 4\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch Case by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_cases}}/api/cases/:caseId",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_cases}}",
+							"path": [
+								"api",
+								"cases",
+								":caseId"
+							],
+							"variable": [
+								{
+									"key": "caseId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_cases}}/api/cases/:caseId",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_cases}}",
+									"path": [
+										"api",
+										"cases",
+										":caseId"
+									],
+									"variable": [
+										{
+											"key": "caseId",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 07 Jul 2025 17:23:15 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1426"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 5,\n    \"source_system\": \"FRM\",\n    \"entity_id\": \"card-token-12345\",\n    \"entity_type\": \"card\",\n    \"customer_id\": \"cust-12345\",\n    \"assigned_to\": null,\n    \"status\": \"New\",\n    \"priority\": \"High\",\n    \"resolution_type\": \"\",\n    \"initial_evidence\": [\n        {\n            \"evidence_type\": \"transaction\",\n            \"evidence_id\": \"b6SJt3bNSY62AHyYYPxJPf\",\n            \"data\": {\n                \"action\": \"DECLINE\",\n                \"createdAt\": 1751344037,\n                \"evaluationSummary\": [\n                    {\n                        \"description\": \"Transaction type is WALLET and transaction amount is greater than wallet balance\",\n                        \"expression\": \"txn_type == 'WALLET' && txn_amount > wallet_balance\",\n                        \"flagged\": true,\n                        \"id\": \"1920386885251764224\",\n                        \"isExecuted\": true,\n                        \"title\": \"Insufficient wallet balance\"\n                    }\n                ],\n                \"id\": \"b6SJt3bNSY62AHyYYPxJPf\",\n                \"payload\": {\n                    \"data\": {\n                        \"account_balance\": 10000,\n                        \"account_id\": \"acc_789\",\n                        \"account_type\": \"SAVINGS\",\n                        \"card_masked\": true,\n                        \"card_number\": \"4111111111111111\",\n                        \"card_type\": \"CREDIT\",\n                        \"count_txn_id_1d\": 5,\n                        \"counter_partyid\": \"cp_303\",\n                        \"wallet_id\": \"wallet_123\"\n                    }\n                },\n                \"receivedAt\": 1751344037,\n                \"rulesFlagged\": [\n                    {\n                        \"description\": \"Transaction type is WALLET and transaction amount is greater than wallet balance\",\n                        \"expression\": \"txn_type == 'WALLET' && txn_amount > wallet_balance\",\n                        \"id\": \"1920386885251764224\",\n                        \"title\": \"Insufficient wallet balance\"\n                    }\n                ],\n                \"updatedAt\": 1751344037\n            },\n            \"linked_at\": \"2025-07-07T17:16:21.426Z\"\n        }\n    ],\n    \"additional_evidence\": null,\n    \"linked_cases\": null,\n    \"metadata\": {\n        \"alert_id\": \"alert_xyz_789\"\n    },\n    \"created_at\": \"2025-07-07T22:46:21.464404+05:30\",\n    \"updated_at\": \"2025-07-07T22:46:21.464404+05:30\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Config",
+			"item": [
+				{
+					"name": "Ping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/ping",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_config}}",
+							"path": [
+								"api",
+								"config",
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Evidence Configs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/evidences?source_system=FRM&evidence_type=transaction",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_config}}",
+							"path": [
+								"api",
+								"config",
+								"evidences"
+							],
+							"query": [
+								{
+									"key": "source_system",
+									"value": "FRM"
+								},
+								{
+									"key": "evidence_type",
+									"value": "transaction"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/evidences?source_system=FRM&evidence_type=transaction",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_config}}",
+									"path": [
+										"api",
+										"config",
+										"evidences"
+									],
+									"query": [
+										{
+											"key": "source_system",
+											"value": "FRM"
+										},
+										{
+											"key": "evidence_type",
+											"value": "transaction"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 07 Jul 2025 17:23:44 GMT"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"source_system\": \"frm\",\n            \"evidence_type\": \"transaction\",\n            \"evidence_schema\": {\n                \"type\": \"object\",\n                \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n                \"required\": [\n                    \"payload\",\n                    \"rulesFlagged\",\n                    \"evaluationSummary\",\n                    \"action\",\n                    \"createdAt\"\n                ],\n                \"properties\": {\n                    \"action\": {\n                        \"type\": \"string\"\n                    },\n                    \"payload\": {\n                        \"type\": \"object\",\n                        \"required\": [\n                            \"data\"\n                        ],\n                        \"properties\": {\n                            \"data\": {\n                                \"type\": \"object\",\n                                \"required\": [\n                                    \"account_id\",\n                                    \"account_type\",\n                                    \"card_number\",\n                                    \"card_type\",\n                                    \"wallet_id\"\n                                ],\n                                \"properties\": {\n                                    \"card_type\": {\n                                        \"type\": \"string\"\n                                    },\n                                    \"wallet_id\": {\n                                        \"type\": \"string\"\n                                    },\n                                    \"account_id\": {\n                                        \"type\": \"string\"\n                                    },\n                                    \"card_number\": {\n                                        \"type\": \"string\"\n                                    },\n                                    \"account_type\": {\n                                        \"type\": \"string\"\n                                    }\n                                }\n                            }\n                        }\n                    },\n                    \"createdAt\": {\n                        \"type\": \"integer\"\n                    },\n                    \"rulesFlagged\": {\n                        \"type\": \"array\",\n                        \"items\": [\n                            {\n                                \"type\": \"object\",\n                                \"required\": [\n                                    \"title\"\n                                ],\n                                \"properties\": {\n                                    \"title\": {\n                                        \"type\": \"string\"\n                                    }\n                                }\n                            }\n                        ]\n                    },\n                    \"evaluationSummary\": {\n                        \"type\": \"array\",\n                        \"items\": [\n                            {\n                                \"type\": \"object\",\n                                \"required\": [\n                                    \"title\",\n                                    \"flagged\",\n                                    \"isExecuted\"\n                                ],\n                                \"properties\": {\n                                    \"title\": {\n                                        \"type\": \"string\"\n                                    },\n                                    \"flagged\": {\n                                        \"type\": \"boolean\"\n                                    },\n                                    \"isExecuted\": {\n                                        \"type\": \"boolean\"\n                                    }\n                                }\n                            }\n                        ]\n                    }\n                }\n            },\n            \"ui_config\": {\n                \"fields\": [\n                    {\n                        \"name\": \"account_id\",\n                        \"path\": \"$.payload.data.account_id\",\n                        \"display_name\": \"Account ID\"\n                    },\n                    {\n                        \"name\": \"account_type\",\n                        \"path\": \"$.payload.data.account_type\",\n                        \"display_name\": \"Account Type\"\n                    },\n                    {\n                        \"name\": \"card_number\",\n                        \"path\": \"$.payload.data.card_number\",\n                        \"display_name\": \"Card Number\"\n                    },\n                    {\n                        \"name\": \"card_type\",\n                        \"path\": \"$.payload.data.card_type\",\n                        \"display_name\": \"Card Type\"\n                    },\n                    {\n                        \"name\": \"wallet_id\",\n                        \"path\": \"$.payload.data.wallet_id\",\n                        \"display_name\": \"Wallet ID\"\n                    },\n                    {\n                        \"name\": \"rule_flagged_title\",\n                        \"path\": \"$.rulesFlagged[*].title\",\n                        \"display_name\": \"Rule Flagged Title\"\n                    },\n                    {\n                        \"name\": \"evaluation_summary_title\",\n                        \"path\": \"$.evaluationSummary[*].title\",\n                        \"display_name\": \"Evaluation Summary Title\"\n                    },\n                    {\n                        \"name\": \"evaluation_summary_flagged\",\n                        \"path\": \"$.evaluationSummary[*].flagged\",\n                        \"display_name\": \"Evaluation Flagged\"\n                    },\n                    {\n                        \"name\": \"evaluation_summary_is_executed\",\n                        \"path\": \"$.evaluationSummary[*].isExecuted\",\n                        \"display_name\": \"Evaluation Executed\"\n                    },\n                    {\n                        \"name\": \"action\",\n                        \"path\": \"$.action\",\n                        \"display_name\": \"Action\"\n                    },\n                    {\n                        \"name\": \"created_at\",\n                        \"path\": \"$.createdAt\",\n                        \"display_name\": \"Created At\"\n                    }\n                ]\n            },\n            \"created_at\": \"2025-07-07T22:42:20+05:30\",\n            \"updated_at\": \"2025-07-07T22:42:20+05:30\",\n            \"created_by\": 1,\n            \"updated_by\": 1\n        }\n    ],\n    \"total\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch Source Configs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/sources",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_config}}",
+							"path": [
+								"api",
+								"config",
+								"sources"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Fetch Evidence Configs",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/sources",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_config}}",
+									"path": [
+										"api",
+										"config",
+										"sources"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Jul 2025 10:10:25 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1608"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": 1,\n            \"source_system\": \"frm\",\n            \"entity_type\": \"customer\",\n            \"ui_config\": [\n                {\n                    \"path\": \"$.customer_id\",\n                    \"field\": \"customer_id\",\n                    \"display_text\": \"Customer ID\",\n                    \"component_type\": \"text\",\n                    \"display_length\": 64\n                },\n                {\n                    \"path\": \"$.customer_name\",\n                    \"field\": \"customer_name\",\n                    \"display_text\": \"Customer Name\",\n                    \"component_type\": \"badge\",\n                    \"display_length\": 64\n                },\n                {\n                    \"path\": \"$.phone_number\",\n                    \"field\": \"phone_number\",\n                    \"display_text\": \"Phone Number\",\n                    \"component_type\": \"text\",\n                    \"display_length\": 64\n                },\n                {\n                    \"path\": \"$.account_id\",\n                    \"field\": \"account_id\",\n                    \"display_text\": \"Account ID\",\n                    \"component_type\": \"badge\",\n                    \"display_length\": 64\n                },\n                {\n                    \"path\": \"$.card_issue_date\",\n                    \"field\": \"card_issue_date\",\n                    \"display_text\": \"Card Issue Date\",\n                    \"component_type\": \"text\",\n                    \"display_length\": 64\n                },\n                {\n                    \"path\": \"$.card_status\",\n                    \"field\": \"card_status\",\n                    \"display_text\": \"Card Status\",\n                    \"component_type\": \"badge\",\n                    \"display_length\": 64\n                },\n                {\n                    \"path\": \"$.card_type\",\n                    \"field\": \"card_type\",\n                    \"display_text\": \"Card Type\",\n                    \"component_type\": \"text\",\n                    \"display_length\": 64\n                }\n            ],\n            \"source_api\": {\n                \"url\": \"https://eo1dlm3ngqd4w77.m.pipedream.net/{entityId}\",\n                \"headers\": {},\n                \"query_params\": {},\n                \"response_schema\": {\n                    \"type\": \"object\",\n                    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n                    \"required\": [\n                        \"customer_id\",\n                        \"customer_name\",\n                        \"phone_number\",\n                        \"account_id\",\n                        \"card_issue_date\",\n                        \"card_status\",\n                        \"card_type\"\n                    ],\n                    \"properties\": {\n                        \"card_type\": {\n                            \"type\": \"string\"\n                        },\n                        \"account_id\": {\n                            \"type\": \"string\"\n                        },\n                        \"card_status\": {\n                            \"type\": \"string\"\n                        },\n                        \"customer_id\": {\n                            \"type\": \"string\"\n                        },\n                        \"phone_number\": {\n                            \"type\": \"string\"\n                        },\n                        \"customer_name\": {\n                            \"type\": \"string\"\n                        },\n                        \"card_issue_date\": {\n                            \"type\": \"string\"\n                        }\n                    }\n                }\n            },\n            \"created_at\": \"2025-07-07T23:58:02+05:30\",\n            \"updated_at\": \"2025-07-07T23:58:02+05:30\",\n            \"created_by\": 1,\n            \"updated_by\": 1\n        }\n    ],\n    \"total\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch Source Config by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/sources/:sourceId",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_config}}",
+							"path": [
+								"api",
+								"config",
+								"sources",
+								":sourceId"
+							],
+							"variable": [
+								{
+									"key": "sourceId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Fetch Source Config by Id",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/sources/:sourceId",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_config}}",
+									"path": [
+										"api",
+										"config",
+										"sources",
+										":sourceId"
+									],
+									"variable": [
+										{
+											"key": "sourceId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Jul 2025 10:11:32 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1587"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"source_system\": \"frm\",\n    \"entity_type\": \"customer\",\n    \"ui_config\": [\n        {\n            \"path\": \"$.customer_id\",\n            \"field\": \"customer_id\",\n            \"display_text\": \"Customer ID\",\n            \"component_type\": \"text\",\n            \"display_length\": 64\n        },\n        {\n            \"path\": \"$.customer_name\",\n            \"field\": \"customer_name\",\n            \"display_text\": \"Customer Name\",\n            \"component_type\": \"badge\",\n            \"display_length\": 64\n        },\n        {\n            \"path\": \"$.phone_number\",\n            \"field\": \"phone_number\",\n            \"display_text\": \"Phone Number\",\n            \"component_type\": \"text\",\n            \"display_length\": 64\n        },\n        {\n            \"path\": \"$.account_id\",\n            \"field\": \"account_id\",\n            \"display_text\": \"Account ID\",\n            \"component_type\": \"badge\",\n            \"display_length\": 64\n        },\n        {\n            \"path\": \"$.card_issue_date\",\n            \"field\": \"card_issue_date\",\n            \"display_text\": \"Card Issue Date\",\n            \"component_type\": \"text\",\n            \"display_length\": 64\n        },\n        {\n            \"path\": \"$.card_status\",\n            \"field\": \"card_status\",\n            \"display_text\": \"Card Status\",\n            \"component_type\": \"badge\",\n            \"display_length\": 64\n        },\n        {\n            \"path\": \"$.card_type\",\n            \"field\": \"card_type\",\n            \"display_text\": \"Card Type\",\n            \"component_type\": \"text\",\n            \"display_length\": 64\n        }\n    ],\n    \"source_api\": {\n        \"url\": \"https://eo1dlm3ngqd4w77.m.pipedream.net/{entityId}\",\n        \"headers\": {},\n        \"query_params\": {},\n        \"response_schema\": {\n            \"type\": \"object\",\n            \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n            \"required\": [\n                \"customer_id\",\n                \"customer_name\",\n                \"phone_number\",\n                \"account_id\",\n                \"card_issue_date\",\n                \"card_status\",\n                \"card_type\"\n            ],\n            \"properties\": {\n                \"card_type\": {\n                    \"type\": \"string\"\n                },\n                \"account_id\": {\n                    \"type\": \"string\"\n                },\n                \"card_status\": {\n                    \"type\": \"string\"\n                },\n                \"customer_id\": {\n                    \"type\": \"string\"\n                },\n                \"phone_number\": {\n                    \"type\": \"string\"\n                },\n                \"customer_name\": {\n                    \"type\": \"string\"\n                },\n                \"card_issue_date\": {\n                    \"type\": \"string\"\n                }\n            }\n        }\n    },\n    \"created_at\": \"2025-07-07T23:58:02+05:30\",\n    \"updated_at\": \"2025-07-07T23:58:02+05:30\",\n    \"created_by\": 1,\n    \"updated_by\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch Evidence Config by Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/evidences/:evidenceId",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_config}}",
+							"path": [
+								"api",
+								"config",
+								"evidences",
+								":evidenceId"
+							],
+							"variable": [
+								{
+									"key": "evidenceId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/evidences/:evidenceId",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_config}}",
+									"path": [
+										"api",
+										"config",
+										"evidences",
+										":evidenceId"
+									],
+									"variable": [
+										{
+											"key": "evidenceId",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 07 Jul 2025 12:29:24 GMT"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 2,\n    \"source_system\": \"FRM\",\n    \"evidence_type\": \"TRANSACTION_1\",\n    \"evidence_schema\": {\n        \"type\": \"object\",\n        \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n        \"required\": [\n            \"payload\",\n            \"rulesFlagged\",\n            \"evaluationSummary\",\n            \"action\",\n            \"createdAt\"\n        ],\n        \"properties\": {\n            \"action\": {\n                \"type\": \"string\"\n            },\n            \"payload\": {\n                \"type\": \"object\",\n                \"required\": [\n                    \"data\"\n                ],\n                \"properties\": {\n                    \"data\": {\n                        \"type\": \"object\",\n                        \"required\": [\n                            \"account_id\",\n                            \"account_type\",\n                            \"card_number\",\n                            \"card_type\",\n                            \"wallet_id\"\n                        ],\n                        \"properties\": {\n                            \"card_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"wallet_id\": {\n                                \"type\": \"string\"\n                            },\n                            \"account_id\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_number\": {\n                                \"type\": \"string\"\n                            },\n                            \"account_type\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    }\n                }\n            },\n            \"createdAt\": {\n                \"type\": \"integer\"\n            },\n            \"rulesFlagged\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"required\": [\n                            \"title\"\n                        ],\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            }\n                        }\n                    }\n                ]\n            },\n            \"evaluationSummary\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"required\": [\n                            \"title\",\n                            \"flagged\",\n                            \"isExecuted\"\n                        ],\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            },\n                            \"flagged\": {\n                                \"type\": \"boolean\"\n                            },\n                            \"isExecuted\": {\n                                \"type\": \"boolean\"\n                            }\n                        }\n                    }\n                ]\n            }\n        }\n    },\n    \"ui_config\": {\n        \"fields\": [\n            {\n                \"name\": \"account_id\",\n                \"path\": \"$.payload.data.account_id\",\n                \"display_name\": \"Account ID\"\n            },\n            {\n                \"name\": \"account_type\",\n                \"path\": \"$.payload.data.account_type\",\n                \"display_name\": \"Account Type\"\n            },\n            {\n                \"name\": \"card_number\",\n                \"path\": \"$.payload.data.card_number\",\n                \"display_name\": \"Card Number\"\n            },\n            {\n                \"name\": \"card_type\",\n                \"path\": \"$.payload.data.card_type\",\n                \"display_name\": \"Card Type\"\n            },\n            {\n                \"name\": \"wallet_id\",\n                \"path\": \"$.payload.data.wallet_id\",\n                \"display_name\": \"Wallet ID\"\n            },\n            {\n                \"name\": \"rule_flagged_title\",\n                \"path\": \"$.rulesFlagged[*].title\",\n                \"display_name\": \"Rule Flagged Title\"\n            },\n            {\n                \"name\": \"evaluation_summary_title\",\n                \"path\": \"$.evaluationSummary[*].title\",\n                \"display_name\": \"Evaluation Summary Title\"\n            },\n            {\n                \"name\": \"evaluation_summary_flagged\",\n                \"path\": \"$.evaluationSummary[*].flagged\",\n                \"display_name\": \"Evaluation Flagged\"\n            },\n            {\n                \"name\": \"evaluation_summary_is_executed\",\n                \"path\": \"$.evaluationSummary[*].isExecuted\",\n                \"display_name\": \"Evaluation Executed\"\n            },\n            {\n                \"name\": \"action\",\n                \"path\": \"$.action\",\n                \"display_name\": \"Action\"\n            },\n            {\n                \"name\": \"created_at\",\n                \"path\": \"$.createdAt\",\n                \"display_name\": \"Created At\"\n            }\n        ]\n    },\n    \"is_active\": true,\n    \"created_at\": \"2025-07-07T17:55:50+05:30\",\n    \"updated_at\": \"2025-07-07T17:55:50+05:30\",\n    \"created_by\": 1,\n    \"updated_by\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Evidence Config",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"source_system\": \"FRM\",\n    \"evidence_type\": \"TRANSACTION\",\n    \"evidence_schema\": {\n        \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n        \"type\": \"object\",\n        \"properties\": {\n            \"payload\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"data\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"account_id\": {\n                                \"type\": \"string\"\n                            },\n                            \"account_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_number\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"wallet_id\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"account_id\",\n                            \"account_type\",\n                            \"card_number\",\n                            \"card_type\",\n                            \"wallet_id\"\n                        ]\n                    }\n                },\n                \"required\": [\n                    \"data\"\n                ]\n            },\n            \"rulesFlagged\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\"\n                        ]\n                    }\n                ]\n            },\n            \"evaluationSummary\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            },\n                            \"flagged\": {\n                                \"type\": \"boolean\"\n                            },\n                            \"isExecuted\": {\n                                \"type\": \"boolean\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\",\n                            \"flagged\",\n                            \"isExecuted\"\n                        ]\n                    }\n                ]\n            },\n            \"action\": {\n                \"type\": \"string\"\n            },\n            \"createdAt\": {\n                \"type\": \"integer\"\n            }\n        },\n        \"required\": [\n            \"payload\",\n            \"rulesFlagged\",\n            \"evaluationSummary\",\n            \"action\",\n            \"createdAt\"\n        ]\n    },\n    \"ui_config\": {\n        \"fields\": [\n            {\n                \"name\": \"account_id\",\n                \"display_name\": \"Account ID\",\n                \"path\": \"$.payload.data.account_id\"\n            },\n            {\n                \"name\": \"account_type\",\n                \"display_name\": \"Account Type\",\n                \"path\": \"$.payload.data.account_type\"\n            },\n            {\n                \"name\": \"card_number\",\n                \"display_name\": \"Card Number\",\n                \"path\": \"$.payload.data.card_number\"\n            },\n            {\n                \"name\": \"card_type\",\n                \"display_name\": \"Card Type\",\n                \"path\": \"$.payload.data.card_type\"\n            },\n            {\n                \"name\": \"wallet_id\",\n                \"display_name\": \"Wallet ID\",\n                \"path\": \"$.payload.data.wallet_id\"\n            },\n            {\n                \"name\": \"rule_flagged_title\",\n                \"display_name\": \"Rule Flagged Title\",\n                \"path\": \"$.rulesFlagged[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_title\",\n                \"display_name\": \"Evaluation Summary Title\",\n                \"path\": \"$.evaluationSummary[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_flagged\",\n                \"display_name\": \"Evaluation Flagged\",\n                \"path\": \"$.evaluationSummary[*].flagged\"\n            },\n            {\n                \"name\": \"evaluation_summary_is_executed\",\n                \"display_name\": \"Evaluation Executed\",\n                \"path\": \"$.evaluationSummary[*].isExecuted\"\n            },\n            {\n                \"name\": \"action\",\n                \"display_name\": \"Action\",\n                \"path\": \"$.action\"\n            },\n            {\n                \"name\": \"created_at\",\n                \"display_name\": \"Created At\",\n                \"path\": \"$.createdAt\"\n            }\n        ]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/evidences",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_config}}",
+							"path": [
+								"api",
+								"config",
+								"evidences"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"source_system\": \"FRM\",\n    \"evidence_type\": \"TRANSACTION\",\n    \"evidence_schema\": {\n        \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n        \"type\": \"object\",\n        \"properties\": {\n            \"payload\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"data\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"account_id\": {\n                                \"type\": \"string\"\n                            },\n                            \"account_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_number\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"wallet_id\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"account_id\",\n                            \"account_type\",\n                            \"card_number\",\n                            \"card_type\",\n                            \"wallet_id\"\n                        ]\n                    }\n                },\n                \"required\": [\n                    \"data\"\n                ]\n            },\n            \"rulesFlagged\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\"\n                        ]\n                    }\n                ]\n            },\n            \"evaluationSummary\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            },\n                            \"flagged\": {\n                                \"type\": \"boolean\"\n                            },\n                            \"isExecuted\": {\n                                \"type\": \"boolean\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\",\n                            \"flagged\",\n                            \"isExecuted\"\n                        ]\n                    }\n                ]\n            },\n            \"action\": {\n                \"type\": \"string\"\n            },\n            \"createdAt\": {\n                \"type\": \"integer\"\n            }\n        },\n        \"required\": [\n            \"payload\",\n            \"rulesFlagged\",\n            \"evaluationSummary\",\n            \"action\",\n            \"createdAt\"\n        ]\n    },\n    \"ui_config\": {\n        \"fields\": [\n            {\n                \"name\": \"account_id\",\n                \"display_name\": \"Account ID\",\n                \"path\": \"$.payload.data.account_id\"\n            },\n            {\n                \"name\": \"account_type\",\n                \"display_name\": \"Account Type\",\n                \"path\": \"$.payload.data.account_type\"\n            },\n            {\n                \"name\": \"card_number\",\n                \"display_name\": \"Card Number\",\n                \"path\": \"$.payload.data.card_number\"\n            },\n            {\n                \"name\": \"card_type\",\n                \"display_name\": \"Card Type\",\n                \"path\": \"$.payload.data.card_type\"\n            },\n            {\n                \"name\": \"wallet_id\",\n                \"display_name\": \"Wallet ID\",\n                \"path\": \"$.payload.data.wallet_id\"\n            },\n            {\n                \"name\": \"rule_flagged_title\",\n                \"display_name\": \"Rule Flagged Title\",\n                \"path\": \"$.rulesFlagged[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_title\",\n                \"display_name\": \"Evaluation Summary Title\",\n                \"path\": \"$.evaluationSummary[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_flagged\",\n                \"display_name\": \"Evaluation Flagged\",\n                \"path\": \"$.evaluationSummary[*].flagged\"\n            },\n            {\n                \"name\": \"evaluation_summary_is_executed\",\n                \"display_name\": \"Evaluation Executed\",\n                \"path\": \"$.evaluationSummary[*].isExecuted\"\n            },\n            {\n                \"name\": \"action\",\n                \"display_name\": \"Action\",\n                \"path\": \"$.action\"\n            },\n            {\n                \"name\": \"created_at\",\n                \"display_name\": \"Created At\",\n                \"path\": \"$.createdAt\"\n            }\n        ]\n    },\n    \"attribute_links\": [\n        {\n            \"field\": \"transaction_id\",\n            \"link\": \"\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/evidences",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_config}}",
+									"path": [
+										"api",
+										"config",
+										"evidences"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 07 Jul 2025 17:12:20 GMT"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"source_system\": \"frm\",\n    \"evidence_type\": \"transaction\",\n    \"evidence_schema\": {\n        \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n        \"type\": \"object\",\n        \"properties\": {\n            \"payload\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"data\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"account_id\": {\n                                \"type\": \"string\"\n                            },\n                            \"account_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_number\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"wallet_id\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"account_id\",\n                            \"account_type\",\n                            \"card_number\",\n                            \"card_type\",\n                            \"wallet_id\"\n                        ]\n                    }\n                },\n                \"required\": [\n                    \"data\"\n                ]\n            },\n            \"rulesFlagged\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\"\n                        ]\n                    }\n                ]\n            },\n            \"evaluationSummary\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            },\n                            \"flagged\": {\n                                \"type\": \"boolean\"\n                            },\n                            \"isExecuted\": {\n                                \"type\": \"boolean\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\",\n                            \"flagged\",\n                            \"isExecuted\"\n                        ]\n                    }\n                ]\n            },\n            \"action\": {\n                \"type\": \"string\"\n            },\n            \"createdAt\": {\n                \"type\": \"integer\"\n            }\n        },\n        \"required\": [\n            \"payload\",\n            \"rulesFlagged\",\n            \"evaluationSummary\",\n            \"action\",\n            \"createdAt\"\n        ]\n    },\n    \"ui_config\": {\n        \"fields\": [\n            {\n                \"name\": \"account_id\",\n                \"display_name\": \"Account ID\",\n                \"path\": \"$.payload.data.account_id\"\n            },\n            {\n                \"name\": \"account_type\",\n                \"display_name\": \"Account Type\",\n                \"path\": \"$.payload.data.account_type\"\n            },\n            {\n                \"name\": \"card_number\",\n                \"display_name\": \"Card Number\",\n                \"path\": \"$.payload.data.card_number\"\n            },\n            {\n                \"name\": \"card_type\",\n                \"display_name\": \"Card Type\",\n                \"path\": \"$.payload.data.card_type\"\n            },\n            {\n                \"name\": \"wallet_id\",\n                \"display_name\": \"Wallet ID\",\n                \"path\": \"$.payload.data.wallet_id\"\n            },\n            {\n                \"name\": \"rule_flagged_title\",\n                \"display_name\": \"Rule Flagged Title\",\n                \"path\": \"$.rulesFlagged[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_title\",\n                \"display_name\": \"Evaluation Summary Title\",\n                \"path\": \"$.evaluationSummary[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_flagged\",\n                \"display_name\": \"Evaluation Flagged\",\n                \"path\": \"$.evaluationSummary[*].flagged\"\n            },\n            {\n                \"name\": \"evaluation_summary_is_executed\",\n                \"display_name\": \"Evaluation Executed\",\n                \"path\": \"$.evaluationSummary[*].isExecuted\"\n            },\n            {\n                \"name\": \"action\",\n                \"display_name\": \"Action\",\n                \"path\": \"$.action\"\n            },\n            {\n                \"name\": \"created_at\",\n                \"display_name\": \"Created At\",\n                \"path\": \"$.createdAt\"\n            }\n        ]\n    },\n    \"created_at\": \"2025-07-07T17:12:20Z\",\n    \"updated_at\": \"2025-07-07T17:12:20Z\",\n    \"created_by\": 1,\n    \"updated_by\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Source Config",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"source_system\": \"FRM\",\n    \"entity_type\": \"customer\",\n    \"ui_config\": [\n        {\n            \"field\": \"customer_id\",\n            \"path\": \"$.customer_id\",\n            \"display_text\": \"Customer ID\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        },\n        {\n            \"field\": \"customer_name\",\n            \"path\": \"$.customer_name\",\n            \"display_text\": \"Customer Name\",\n            \"display_length\": 64,\n            \"component_type\": \"badge\"\n        },\n        {\n            \"field\": \"phone_number\",\n            \"path\": \"$.phone_number\",\n            \"display_text\": \"Phone Number\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        },\n        {\n            \"field\": \"account_id\",\n            \"path\": \"$.account_id\",\n            \"display_text\": \"Account ID\",\n            \"display_length\": 64,\n            \"component_type\": \"badge\"\n        },\n        {\n            \"field\": \"card_issue_date\",\n            \"path\": \"$.card_issue_date\",\n            \"display_text\": \"Card Issue Date\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        },\n        {\n            \"field\": \"card_status\",\n            \"path\": \"$.card_status\",\n            \"display_text\": \"Card Status\",\n            \"display_length\": 64,\n            \"component_type\": \"badge\"\n        },\n        {\n            \"field\": \"card_type\",\n            \"path\": \"$.card_type\",\n            \"display_text\": \"Card Type\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        }\n    ],\n    \"source_api\": {\n        \"url\": \"https://eo1dlm3ngqd4w77.m.pipedream.net/{entityId}\",\n        \"headers\": {},\n        \"query_params\": {},\n        \"response_schema\": {\n            \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n            \"type\": \"object\",\n            \"properties\": {\n                \"customer_id\": {\n                    \"type\": \"string\"\n                },\n                \"customer_name\": {\n                    \"type\": \"string\"\n                },\n                \"phone_number\": {\n                    \"type\": \"string\"\n                },\n                \"account_id\": {\n                    \"type\": \"string\"\n                },\n                \"card_issue_date\": {\n                    \"type\": \"string\"\n                },\n                \"card_status\": {\n                    \"type\": \"string\"\n                },\n                \"card_type\": {\n                    \"type\": \"string\"\n                }\n            },\n            \"required\": [\n                \"customer_id\",\n                \"customer_name\",\n                \"phone_number\",\n                \"account_id\",\n                \"card_issue_date\",\n                \"card_status\",\n                \"card_type\"\n            ]\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/sources",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_config}}",
+							"path": [
+								"api",
+								"config",
+								"sources"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"source_system\": \"FRM\",\n    \"entity_type\": \"customer\",\n    \"ui_config\": [\n        {\n            \"field\": \"customer_id\",\n            \"path\": \"$.customer_id\",\n            \"display_text\": \"Customer ID\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        },\n        {\n            \"field\": \"customer_name\",\n            \"path\": \"$.customer_name\",\n            \"display_text\": \"Customer Name\",\n            \"display_length\": 64,\n            \"component_type\": \"badge\"\n        },\n        {\n            \"field\": \"phone_number\",\n            \"path\": \"$.phone_number\",\n            \"display_text\": \"Phone Number\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        },\n        {\n            \"field\": \"account_id\",\n            \"path\": \"$.account_id\",\n            \"display_text\": \"Account ID\",\n            \"display_length\": 64,\n            \"component_type\": \"badge\"\n        },\n        {\n            \"field\": \"card_issue_date\",\n            \"path\": \"$.card_issue_date\",\n            \"display_text\": \"Card Issue Date\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        },\n        {\n            \"field\": \"card_status\",\n            \"path\": \"$.card_status\",\n            \"display_text\": \"Card Status\",\n            \"display_length\": 64,\n            \"component_type\": \"badge\"\n        },\n        {\n            \"field\": \"card_type\",\n            \"path\": \"$.card_type\",\n            \"display_text\": \"Card Type\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        }\n    ],\n    \"source_api\": {\n        \"url\": \"https://eo1dlm3ngqd4w77.m.pipedream.net/{entityId}\",\n        \"headers\": {},\n        \"query_params\": {},\n        \"response_schema\": {\n            \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n            \"type\": \"object\",\n            \"properties\": {\n                \"customer_id\": {\n                    \"type\": \"string\"\n                },\n                \"customer_name\": {\n                    \"type\": \"string\"\n                },\n                \"phone_number\": {\n                    \"type\": \"string\"\n                },\n                \"account_id\": {\n                    \"type\": \"string\"\n                },\n                \"card_issue_date\": {\n                    \"type\": \"string\"\n                },\n                \"card_status\": {\n                    \"type\": \"string\"\n                },\n                \"card_type\": {\n                    \"type\": \"string\"\n                }\n            },\n            \"required\": [\n                \"customer_id\",\n                \"customer_name\",\n                \"phone_number\",\n                \"account_id\",\n                \"card_issue_date\",\n                \"card_status\",\n                \"card_type\"\n            ]\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/sources",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_config}}",
+									"path": [
+										"api",
+										"config",
+										"sources"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 07 Jul 2025 18:28:02 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1577"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"source_system\": \"frm\",\n    \"entity_type\": \"customer\",\n    \"ui_config\": [\n        {\n            \"field\": \"customer_id\",\n            \"path\": \"$.customer_id\",\n            \"display_text\": \"Customer ID\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        },\n        {\n            \"field\": \"customer_name\",\n            \"path\": \"$.customer_name\",\n            \"display_text\": \"Customer Name\",\n            \"display_length\": 64,\n            \"component_type\": \"badge\"\n        },\n        {\n            \"field\": \"phone_number\",\n            \"path\": \"$.phone_number\",\n            \"display_text\": \"Phone Number\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        },\n        {\n            \"field\": \"account_id\",\n            \"path\": \"$.account_id\",\n            \"display_text\": \"Account ID\",\n            \"display_length\": 64,\n            \"component_type\": \"badge\"\n        },\n        {\n            \"field\": \"card_issue_date\",\n            \"path\": \"$.card_issue_date\",\n            \"display_text\": \"Card Issue Date\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        },\n        {\n            \"field\": \"card_status\",\n            \"path\": \"$.card_status\",\n            \"display_text\": \"Card Status\",\n            \"display_length\": 64,\n            \"component_type\": \"badge\"\n        },\n        {\n            \"field\": \"card_type\",\n            \"path\": \"$.card_type\",\n            \"display_text\": \"Card Type\",\n            \"display_length\": 64,\n            \"component_type\": \"text\"\n        }\n    ],\n    \"source_api\": {\n        \"url\": \"https://eo1dlm3ngqd4w77.m.pipedream.net/{entityId}\",\n        \"headers\": {},\n        \"query_params\": {},\n        \"response_schema\": {\n            \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n            \"properties\": {\n                \"account_id\": {\n                    \"type\": \"string\"\n                },\n                \"card_issue_date\": {\n                    \"type\": \"string\"\n                },\n                \"card_status\": {\n                    \"type\": \"string\"\n                },\n                \"card_type\": {\n                    \"type\": \"string\"\n                },\n                \"customer_id\": {\n                    \"type\": \"string\"\n                },\n                \"customer_name\": {\n                    \"type\": \"string\"\n                },\n                \"phone_number\": {\n                    \"type\": \"string\"\n                }\n            },\n            \"required\": [\n                \"customer_id\",\n                \"customer_name\",\n                \"phone_number\",\n                \"account_id\",\n                \"card_issue_date\",\n                \"card_status\",\n                \"card_type\"\n            ],\n            \"type\": \"object\"\n        }\n    },\n    \"created_at\": \"2025-07-07T18:28:02Z\",\n    \"updated_at\": \"2025-07-07T18:28:02Z\",\n    \"created_by\": 1,\n    \"updated_by\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Evidence Config",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"evidence_schema\": {\n        \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n        \"type\": \"object\",\n        \"properties\": {\n            \"payload\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"data\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"account_id\": {\n                                \"type\": \"string\"\n                            },\n                            \"account_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_number\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"wallet_id\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"account_id\",\n                            \"account_type\",\n                            \"card_number\",\n                            \"card_type\",\n                            \"wallet_id\"\n                        ]\n                    }\n                },\n                \"required\": [\n                    \"data\"\n                ]\n            },\n            \"rulesFlagged\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\"\n                        ]\n                    }\n                ]\n            },\n            \"evaluationSummary\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            },\n                            \"flagged\": {\n                                \"type\": \"boolean\"\n                            },\n                            \"isExecuted\": {\n                                \"type\": \"boolean\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\",\n                            \"flagged\",\n                            \"isExecuted\"\n                        ]\n                    }\n                ]\n            },\n            \"action\": {\n                \"type\": \"string\"\n            },\n            \"createdAt\": {\n                \"type\": \"integer\"\n            }\n        },\n        \"required\": [\n            \"payload\",\n            \"rulesFlagged\",\n            \"evaluationSummary\",\n            \"action\",\n            \"createdAt\"\n        ]\n    },\n    \"ui_config\": {\n        \"fields\": [\n            {\n                \"name\": \"account_id\",\n                \"display_name\": \"Account ID\",\n                \"path\": \"$.payload.data.account_id\"\n            },\n            {\n                \"name\": \"account_type\",\n                \"display_name\": \"Account Type\",\n                \"path\": \"$.payload.data.account_type\"\n            },\n            {\n                \"name\": \"card_number\",\n                \"display_name\": \"Card Number\",\n                \"path\": \"$.payload.data.card_number\"\n            },\n            {\n                \"name\": \"card_type\",\n                \"display_name\": \"Card Type\",\n                \"path\": \"$.payload.data.card_type\"\n            },\n            {\n                \"name\": \"wallet_id\",\n                \"display_name\": \"Wallet ID\",\n                \"path\": \"$.payload.data.wallet_id\"\n            },\n            {\n                \"name\": \"rule_flagged_title\",\n                \"display_name\": \"Rule Flagged Title\",\n                \"path\": \"$.rulesFlagged[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_title\",\n                \"display_name\": \"Evaluation Summary Title\",\n                \"path\": \"$.evaluationSummary[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_flagged\",\n                \"display_name\": \"Evaluation Flagged\",\n                \"path\": \"$.evaluationSummary[*].flagged\"\n            },\n            {\n                \"name\": \"evaluation_summary_is_executed\",\n                \"display_name\": \"Evaluation Executed\",\n                \"path\": \"$.evaluationSummary[*].isExecuted\"\n            },\n            {\n                \"name\": \"action\",\n                \"display_name\": \"Action\",\n                \"path\": \"$.action\"\n            },\n            {\n                \"name\": \"created_at\",\n                \"display_name\": \"Created At\",\n                \"path\": \"$.createdAt\"\n            }\n        ]\n    },\n    \"is_active\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/evidences/:evidenceId",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_config}}",
+							"path": [
+								"api",
+								"config",
+								"evidences",
+								":evidenceId"
+							],
+							"variable": [
+								{
+									"key": "evidenceId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"evidence_schema\": {\n        \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n        \"type\": \"object\",\n        \"properties\": {\n            \"payload\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"data\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"account_id\": {\n                                \"type\": \"string\"\n                            },\n                            \"account_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_number\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"wallet_id\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"account_id\",\n                            \"account_type\",\n                            \"card_number\",\n                            \"card_type\",\n                            \"wallet_id\"\n                        ]\n                    }\n                },\n                \"required\": [\n                    \"data\"\n                ]\n            },\n            \"rulesFlagged\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\"\n                        ]\n                    }\n                ]\n            },\n            \"evaluationSummary\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            },\n                            \"flagged\": {\n                                \"type\": \"boolean\"\n                            },\n                            \"isExecuted\": {\n                                \"type\": \"boolean\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\",\n                            \"flagged\",\n                            \"isExecuted\"\n                        ]\n                    }\n                ]\n            },\n            \"action\": {\n                \"type\": \"string\"\n            },\n            \"createdAt\": {\n                \"type\": \"integer\"\n            }\n        },\n        \"required\": [\n            \"payload\",\n            \"rulesFlagged\",\n            \"evaluationSummary\",\n            \"action\",\n            \"createdAt\"\n        ]\n    },\n    \"ui_config\": {\n        \"fields\": [\n            {\n                \"name\": \"account_id\",\n                \"display_name\": \"Account ID\",\n                \"path\": \"$.payload.data.account_id\"\n            },\n            {\n                \"name\": \"account_type\",\n                \"display_name\": \"Account Type\",\n                \"path\": \"$.payload.data.account_type\"\n            },\n            {\n                \"name\": \"card_number\",\n                \"display_name\": \"Card Number\",\n                \"path\": \"$.payload.data.card_number\"\n            },\n            {\n                \"name\": \"card_type\",\n                \"display_name\": \"Card Type\",\n                \"path\": \"$.payload.data.card_type\"\n            },\n            {\n                \"name\": \"wallet_id\",\n                \"display_name\": \"Wallet ID\",\n                \"path\": \"$.payload.data.wallet_id\"\n            },\n            {\n                \"name\": \"rule_flagged_title\",\n                \"display_name\": \"Rule Flagged Title\",\n                \"path\": \"$.rulesFlagged[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_title\",\n                \"display_name\": \"Evaluation Summary Title\",\n                \"path\": \"$.evaluationSummary[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_flagged\",\n                \"display_name\": \"Evaluation Flagged\",\n                \"path\": \"$.evaluationSummary[*].flagged\"\n            },\n            {\n                \"name\": \"evaluation_summary_is_executed\",\n                \"display_name\": \"Evaluation Executed\",\n                \"path\": \"$.evaluationSummary[*].isExecuted\"\n            },\n            {\n                \"name\": \"action\",\n                \"display_name\": \"Action\",\n                \"path\": \"$.action\"\n            },\n            {\n                \"name\": \"created_at\",\n                \"display_name\": \"Created At\",\n                \"path\": \"$.createdAt\"\n            }\n        ]\n    },\n    \"is_active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/evidences/:evidenceId",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_config}}",
+									"path": [
+										"api",
+										"config",
+										"evidences",
+										":evidenceId"
+									],
+									"variable": [
+										{
+											"key": "evidenceId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Jul 2025 10:14:21 GMT"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"source_system\": \"frm\",\n    \"evidence_type\": \"transaction\",\n    \"evidence_schema\": {\n        \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n        \"type\": \"object\",\n        \"properties\": {\n            \"payload\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"data\": {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"account_id\": {\n                                \"type\": \"string\"\n                            },\n                            \"account_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_number\": {\n                                \"type\": \"string\"\n                            },\n                            \"card_type\": {\n                                \"type\": \"string\"\n                            },\n                            \"wallet_id\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"account_id\",\n                            \"account_type\",\n                            \"card_number\",\n                            \"card_type\",\n                            \"wallet_id\"\n                        ]\n                    }\n                },\n                \"required\": [\n                    \"data\"\n                ]\n            },\n            \"rulesFlagged\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\"\n                        ]\n                    }\n                ]\n            },\n            \"evaluationSummary\": {\n                \"type\": \"array\",\n                \"items\": [\n                    {\n                        \"type\": \"object\",\n                        \"properties\": {\n                            \"title\": {\n                                \"type\": \"string\"\n                            },\n                            \"flagged\": {\n                                \"type\": \"boolean\"\n                            },\n                            \"isExecuted\": {\n                                \"type\": \"boolean\"\n                            }\n                        },\n                        \"required\": [\n                            \"title\",\n                            \"flagged\",\n                            \"isExecuted\"\n                        ]\n                    }\n                ]\n            },\n            \"action\": {\n                \"type\": \"string\"\n            },\n            \"createdAt\": {\n                \"type\": \"integer\"\n            }\n        },\n        \"required\": [\n            \"payload\",\n            \"rulesFlagged\",\n            \"evaluationSummary\",\n            \"action\",\n            \"createdAt\"\n        ]\n    },\n    \"ui_config\": {\n        \"fields\": [\n            {\n                \"name\": \"account_id\",\n                \"display_name\": \"Account ID\",\n                \"path\": \"$.payload.data.account_id\"\n            },\n            {\n                \"name\": \"account_type\",\n                \"display_name\": \"Account Type\",\n                \"path\": \"$.payload.data.account_type\"\n            },\n            {\n                \"name\": \"card_number\",\n                \"display_name\": \"Card Number\",\n                \"path\": \"$.payload.data.card_number\"\n            },\n            {\n                \"name\": \"card_type\",\n                \"display_name\": \"Card Type\",\n                \"path\": \"$.payload.data.card_type\"\n            },\n            {\n                \"name\": \"wallet_id\",\n                \"display_name\": \"Wallet ID\",\n                \"path\": \"$.payload.data.wallet_id\"\n            },\n            {\n                \"name\": \"rule_flagged_title\",\n                \"display_name\": \"Rule Flagged Title\",\n                \"path\": \"$.rulesFlagged[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_title\",\n                \"display_name\": \"Evaluation Summary Title\",\n                \"path\": \"$.evaluationSummary[*].title\"\n            },\n            {\n                \"name\": \"evaluation_summary_flagged\",\n                \"display_name\": \"Evaluation Flagged\",\n                \"path\": \"$.evaluationSummary[*].flagged\"\n            },\n            {\n                \"name\": \"evaluation_summary_is_executed\",\n                \"display_name\": \"Evaluation Executed\",\n                \"path\": \"$.evaluationSummary[*].isExecuted\"\n            },\n            {\n                \"name\": \"action\",\n                \"display_name\": \"Action\",\n                \"path\": \"$.action\"\n            },\n            {\n                \"name\": \"created_at\",\n                \"display_name\": \"Created At\",\n                \"path\": \"$.createdAt\"\n            }\n        ]\n    },\n    \"created_at\": \"2025-07-07T22:42:20+05:30\",\n    \"updated_at\": \"2025-07-08T10:14:21Z\",\n    \"created_by\": 1,\n    \"updated_by\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch Federation data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/federation?source_system=FRM&entity_type=customer&entity_id=2",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_config}}",
+							"path": [
+								"api",
+								"config",
+								"federation"
+							],
+							"query": [
+								{
+									"key": "source_system",
+									"value": "FRM"
+								},
+								{
+									"key": "entity_type",
+									"value": "customer"
+								},
+								{
+									"key": "entity_id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_config}}/api/config/federation?source_system=FRM&entity_type=customer&entity_id=2",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_config}}",
+									"path": [
+										"api",
+										"config",
+										"federation"
+									],
+									"query": [
+										{
+											"key": "source_system",
+											"value": "FRM"
+										},
+										{
+											"key": "entity_type",
+											"value": "customer"
+										},
+										{
+											"key": "entity_id",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 08 Jul 2025 10:14:42 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "203"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"account_id\": \"acc_454875636\",\n    \"card_issue_date\": \"13-06-2010\",\n    \"card_status\": \"active\",\n    \"card_type\": \"debit\",\n    \"customer_id\": \"cust_6573835482748457\",\n    \"customer_name\": \"Shekh Ataul\",\n    \"phone_number\": \"+911234567890\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "ping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_auth}}/api/auth/ping",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_auth}}",
+							"path": [
+								"api",
+								"auth",
+								"ping"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "ping",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{host}}:{{port_auth}}/api/auth/ping",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port_auth}}",
+									"path": [
+										"api",
+										"auth",
+										"ping"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Alt-Svc",
+									"value": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-store, no-cache, must-revalidate, proxy-revalidate"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'none'"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Permissions-Policy",
+									"value": "geolocation=(), microphone=(), camera=()"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "strict-origin-when-cross-origin"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=86400; includeSubDomains; preload"
+								},
+								{
+									"key": "Surrogate-Control",
+									"value": "no-store"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 12 Jun 2025 12:19:45 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "19"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"response\": \"pong\"\n}"
+						}
+					]
+				},
+				{
+					"name": "login Admin [#1]",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@bureau.id\",\n    \"password\": \"admin1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_auth}}/api/auth/login",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_auth}}",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login (SuperVisor [#2] & Analyst [#3])",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"supervisor@bureau.id\",\n    // \"email\": \"analyst@bureau.id\",\n    \"password\": \"user1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_auth}}/api/auth/login",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_auth}}",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Identity",
+			"item": [
+				{
+					"name": "ping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_identity}}/api/identity/ping",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_identity}}",
+							"path": [
+								"api",
+								"identity",
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "current",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_identity}}/api/identity/current-user",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_identity}}",
+							"path": [
+								"api",
+								"identity",
+								"current-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Verify",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 3,\n    \"isVerified\": \"true\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_identity}}/api/identity/verify",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_identity}}",
+							"path": [
+								"api",
+								"identity",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 3,\n    \"password\": \"user1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_identity}}/api/identity/password",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_identity}}",
+							"path": [
+								"api",
+								"identity",
+								"password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "ping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/ping",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get param userID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/:userID",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								":userID"
+							],
+							"variable": [
+								{
+									"key": "userID",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get ?id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/?id=1&isActive=true",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "isActive",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get ?name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/?name=Bureau",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Bureau"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get ?email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/?email=@bureau.id",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "@bureau.id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get ?mobile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/?mobile=9900",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "mobile",
+									"value": "9900"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get ?roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/?roles=ADMIN,SUPERVISOR,RISK_ANALYST",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "roles",
+									"value": "ADMIN,SUPERVISOR,RISK_ANALYST"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// {\n//     \"name\": \"Supervisor Bureau.id\",\n//     \"email\": \"supervisor@bureau.id\",\n//     \"mobile_no\": \"9123491234\",\n//     \"password\": \"user1234\",\n//     \"roles\": [\n//         \"SUPERVISOR\"\n//     ],\n//     \"isActive\": \"true\",\n//     \"isVerified\": \"true\"\n// }\n{\n    \"name\": \"Analyst Bureau.id\",\n    \"email\": \"analyst@bureau.id\",\n    \"mobile_no\": \"9234592345\",\n    \"password\": \"user1234\",\n    \"roles\": [\n        \"RISK_ANALYST\"\n    ],\n    \"isActive\": \"true\",\n    \"isVerified\": \"true\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"name\": \"Supervisor Bureau.id\",\n    \"email\": \"supervisor@bureau.id\",\n    \"mobile_no\": \"9123491234\",\n    \"password\": \"user1234\",\n    \"roles\": [\n        \"SUPERVISOR\"\n    ],\n    \"isActive\": \"true\",\n    \"isVerified\": \"true\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Roles",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"roles\": [\n        \"SUPERVISOR\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/:userID/role",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								":userID",
+								"role"
+							],
+							"variable": [
+								{
+									"key": "userID",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"isActive\": \"true\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/:userID/status",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								":userID",
+								"status"
+							],
+							"variable": [
+								{
+									"key": "userID",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Verify",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"isVerified\": \"true\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/:userID/verify",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								":userID",
+								"verify"
+							],
+							"variable": [
+								{
+									"key": "userID",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"password\": \"user1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{host}}:{{port_user}}/api/users/:userID/password",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port_user}}",
+							"path": [
+								"api",
+								"users",
+								":userID",
+								"password"
+							],
+							"variable": [
+								{
+									"key": "userID",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "protocol",
+			"value": "https",
+			"type": "string"
+		},
+		{
+			"key": "host",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "port_auth",
+			"value": "13810",
+			"type": "string"
+		},
+		{
+			"key": "port_cases",
+			"value": "13820",
+			"type": "string"
+		},
+		{
+			"key": "port_config",
+			"value": "13830",
+			"type": "string"
+		},
+		{
+			"key": "port_identity",
+			"value": "13840",
+			"type": "string"
+		},
+		{
+			"key": "port_user",
+			"value": "13850",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJuYW1lIjoiQWRtaW4gQnVyZWF1LmlkIiwiZW1haWwiOiJhZG1pbkBidXJlYXUuaWQiLCJyb2xlcyI6WyJTVVBFUl9BRE1JTiIsIkFETUlOIl0sImlzcyI6ImZybS1hdXRoLXNlcnZpY2UiLCJzdWIiOiJzZXJ2aWNlLWF1dGhlbnRpY2F0b3IiLCJleHAiOjE3NTIwNDcwOTMsImlhdCI6MTc1MTk2MDY5MywianRpIjoiMSJ9.aeK1oagK44gwcYy7fIS67ZTZh7sGBF9f4ykNe0_Vg1k",
+			"type": "string"
+		}
+	]
+}

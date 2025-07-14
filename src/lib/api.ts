@@ -11,6 +11,8 @@ import type {
   Customer,
   CaseListParams,
   CommentListParams,
+  EvidenceConfigResponse,
+  SourceConfigResponse,
 } from "./api-types";
 
 // Cases API
@@ -72,4 +74,26 @@ export const customersApi = {
   // Get customer details by ID
   getById: (id: number): Promise<Customer> =>
     apiClient.get(`/customers/${id}`).then((res) => res.data),
+};
+
+// Config API
+export const configApi = {
+  // Get evidence configuration by source system and evidence type
+  getEvidenceConfig: (
+    sourceSystem: string,
+    evidenceType: string
+  ): Promise<EvidenceConfigResponse> =>
+    apiClient
+      .get(`/config/evidences`, {
+        params: { source_system: sourceSystem, evidence_type: evidenceType },
+      })
+      .then((res) => res.data),
+
+  // Get source configuration by source system
+  getSourceConfig: (sourceSystem: string): Promise<SourceConfigResponse> =>
+    apiClient
+      .get(`/config/sources`, {
+        params: { source_system: sourceSystem },
+      })
+      .then((res) => res.data),
 };
