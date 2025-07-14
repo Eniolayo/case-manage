@@ -16,7 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Eye } from "lucide-react";
 import { DataTable } from "@/components/data-table";
 import type { Column } from "@/components/data-table";
 import type { Evidence } from "@/lib/api-types";
@@ -170,10 +170,12 @@ export function EvidenceSection({ caseId }: EvidenceSectionProps) {
             rowActions={[
               {
                 label: "View Details",
+                icon: Eye,
                 onClick: (evidence: Evidence) => setSelectedEvidence(evidence),
               },
               {
                 label: "Open External",
+                icon: ExternalLink,
                 onClick: (evidence: Evidence) => {
                   const { url: externalUrl, config } =
                     constructEvidenceExternalUrl(evidence);

@@ -96,6 +96,16 @@ export const FIXED_CUSTOMERS: Customer[] = [
     createdAt: Date.now() - 30 * 24 * 60 * 60 * 1000,
     updatedAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
   },
+  {
+    id: 2006,
+    name: "Linda Campbell",
+    email: "linda.campbell@example.com",
+    dob: "12-04-1991",
+    phoneNumber: "+1-214-555-1400",
+    accountId: 3006,
+    createdAt: Date.now() - 60 * 24 * 60 * 60 * 1000,
+    updatedAt: Date.now() - 7 * 24 * 60 * 60 * 1000,
+  },
 ];
 
 // Fixed transactions for each case with more variety
@@ -350,7 +360,7 @@ export const MOCK_SOURCE_CONFIG: SourceConfigResponse = {
   data: [
     {
       id: 1,
-      source_system: "FRM",
+      source_system: "frm",
       entity_type: "customer",
       external_link_config: {
         customer_portal_url:
@@ -366,185 +376,85 @@ export const MOCK_SOURCE_CONFIG: SourceConfigResponse = {
           component_type: "text",
         },
         {
-          path: "$.name",
-          field: "name",
+          path: "$.customer_name",
+          field: "customer_name",
           display_text: "Customer Name",
+          component_type: "badge",
+        },
+        {
+          path: "$.phone_number",
+          field: "phone_number",
+          display_text: "Phone Number",
+          component_type: "text",
+        },
+        {
+          path: "$.account_id",
+          field: "account_id",
+          display_text: "Account ID",
+          component_type: "badge",
+        },
+        {
+          path: "$.card_issue_date",
+          field: "card_issue_date",
+          display_text: "Card Issue Date",
+          component_type: "text",
+        },
+        {
+          path: "$.card_status",
+          field: "card_status",
+          display_text: "Card Status",
+          component_type: "badge",
+        },
+        {
+          path: "$.card_type",
+          field: "card_type",
+          display_text: "Card Type",
           component_type: "text",
         },
       ],
       source_api: {
-        url: "https://customer-api.demo.company.com/customers/{entityId}",
-        headers: {
-          Authorization: "Bearer demo-token",
-          "Content-Type": "application/json",
-        },
+        url: "https://eo1dlm3ngqd4w77.m.pipedream.net/{entityId}",
+        headers: {},
         query_params: {},
         response_schema: {
           type: "object",
+          $schema: "http://json-schema.org/draft-04/schema#",
+          required: [
+            "customer_id",
+            "customer_name",
+            "phone_number",
+            "account_id",
+            "card_issue_date",
+            "card_status",
+            "card_type",
+          ],
           properties: {
-            id: { type: "number" },
-            name: { type: "string" },
-            email: { type: "string" },
-          },
-        },
-      },
-    },
-  ],
-};
-
-const RealEvidenceConfig = {
-  data: [
-    {
-      id: 1,
-      source_system: "frm",
-      evidence_type: "transaction",
-      evidence_schema: {
-        type: "object",
-        $schema: "http://json-schema.org/draft-04/schema#",
-        required: [
-          "payload",
-          "rulesFlagged",
-          "evaluationSummary",
-          "action",
-          "createdAt",
-        ],
-        properties: {
-          action: {
-            type: "string",
-          },
-          payload: {
-            type: "object",
-            required: ["data"],
-            properties: {
-              data: {
-                type: "object",
-                required: [
-                  "account_id",
-                  "account_type",
-                  "card_number",
-                  "card_type",
-                  "wallet_id",
-                ],
-                properties: {
-                  card_type: {
-                    type: "string",
-                  },
-                  wallet_id: {
-                    type: "string",
-                  },
-                  account_id: {
-                    type: "string",
-                  },
-                  card_number: {
-                    type: "string",
-                  },
-                  account_type: {
-                    type: "string",
-                  },
-                },
-              },
+            card_type: {
+              type: "string",
+            },
+            account_id: {
+              type: "string",
+            },
+            card_status: {
+              type: "string",
+            },
+            customer_id: {
+              type: "string",
+            },
+            phone_number: {
+              type: "string",
+            },
+            customer_name: {
+              type: "string",
+            },
+            card_issue_date: {
+              type: "string",
             },
           },
-          createdAt: {
-            type: "integer",
-          },
-          rulesFlagged: {
-            type: "array",
-            items: [
-              {
-                type: "object",
-                required: ["title"],
-                properties: {
-                  title: {
-                    type: "string",
-                  },
-                },
-              },
-            ],
-          },
-          evaluationSummary: {
-            type: "array",
-            items: [
-              {
-                type: "object",
-                required: ["title", "flagged", "isExecuted"],
-                properties: {
-                  title: {
-                    type: "string",
-                  },
-                  flagged: {
-                    type: "boolean",
-                  },
-                  isExecuted: {
-                    type: "boolean",
-                  },
-                },
-              },
-            ],
-          },
         },
       },
-      ui_config: {
-        fields: [
-          {
-            name: "account_id",
-            path: "$.payload.data.account_id",
-            display_name: "Account ID",
-          },
-          {
-            name: "account_type",
-            path: "$.payload.data.account_type",
-            display_name: "Account Type",
-          },
-          {
-            name: "card_number",
-            path: "$.payload.data.card_number",
-            display_name: "Card Number",
-          },
-          {
-            name: "card_type",
-            path: "$.payload.data.card_type",
-            display_name: "Card Type",
-          },
-          {
-            name: "wallet_id",
-            path: "$.payload.data.wallet_id",
-            display_name: "Wallet ID",
-          },
-          {
-            name: "rule_flagged_title",
-            path: "$.rulesFlagged[*].title",
-            display_name: "Rule Flagged Title",
-          },
-          {
-            name: "evaluation_summary_title",
-            path: "$.evaluationSummary[*].title",
-            display_name: "Evaluation Summary Title",
-          },
-          {
-            name: "evaluation_summary_flagged",
-            path: "$.evaluationSummary[*].flagged",
-            display_name: "Evaluation Flagged",
-          },
-          {
-            name: "evaluation_summary_is_executed",
-            path: "$.evaluationSummary[*].isExecuted",
-            display_name: "Evaluation Executed",
-          },
-          {
-            name: "action",
-            path: "$.action",
-            display_name: "Action",
-          },
-          {
-            name: "created_at",
-            path: "$.createdAt",
-            display_name: "Created At",
-          },
-        ],
-      },
-      created_at: "2025-07-07T22:42:20+05:30",
-      updated_at: "2025-07-07T22:42:20+05:30",
+      created_at: "2025-07-07T23:58:02+05:30",
+      updated_at: "2025-07-07T23:58:02+05:30",
       created_by: 1,
       updated_by: 1,
     },
@@ -552,7 +462,64 @@ const RealEvidenceConfig = {
   total: 1,
 };
 
-// Realistic evidence data from multiple source systems - based on RealEvidenceConfig structure
+// Mock customer source data based on the source API response schema
+export const MOCK_CUSTOMER_SOURCE_DATA: Record<number, any> = {
+  2001: {
+    customer_id: "CUST_2001",
+    customer_name: "John Smith",
+    phone_number: "+1-555-0123",
+    account_id: "ACC_3001",
+    card_issue_date: "2022-03-15",
+    card_status: "Active",
+    card_type: "Platinum Debit",
+  },
+  2002: {
+    customer_id: "CUST_2002",
+    customer_name: "Emma Wilson",
+    phone_number: "+1-555-0124",
+    account_id: "ACC_3002",
+    card_issue_date: "2023-01-20",
+    card_status: "Active",
+    card_type: "Gold Credit",
+  },
+  2003: {
+    customer_id: "CUST_2003",
+    customer_name: "Michael Chen",
+    phone_number: "+1-555-0125",
+    account_id: "ACC_3003",
+    card_issue_date: "2023-08-10",
+    card_status: "Blocked",
+    card_type: "Standard Debit",
+  },
+  2004: {
+    customer_id: "CUST_2004",
+    customer_name: "Sarah Johnson",
+    phone_number: "+1-555-0126",
+    account_id: "ACC_3004",
+    card_issue_date: "2023-11-05",
+    card_status: "Active",
+    card_type: "Premium Credit",
+  },
+  2005: {
+    customer_id: "CUST_2005",
+    customer_name: "David Brown",
+    phone_number: "+1-555-0127",
+    account_id: "ACC_3005",
+    card_issue_date: "2023-12-01",
+    card_status: "Suspended",
+    card_type: "Platinum Credit",
+  },
+  2006: {
+    customer_id: "CUST_2006",
+    customer_name: "Linda Campbell",
+    phone_number: "+1-214-555-1400",
+    account_id: "ACC_3006",
+    card_issue_date: "2023-06-15",
+    card_status: "Active",
+    card_type: "Gold Debit",
+  },
+};
+
 export const MOCK_EVIDENCE_DATA: Evidence[] = [
   {
     id: "FRM_TXN_123456789",

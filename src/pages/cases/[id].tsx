@@ -58,6 +58,11 @@ export default function CaseDetailPage() {
   const [showForwardDialog, setShowForwardDialog] = useState(false);
   const [comment, setComment] = useState("");
   const [commentHeader, setCommentHeader] = useState("");
+
+  // Additional hooks that need to be called before any conditional logic
+  const createCommentMutation = useCreateComment(caseId);
+  const isSubmittingComment = createCommentMutation.isPending;
+
   // Show loading skeleton while essential data is loading
   if (caseLoading || customerLoading) {
     return <CaseDetailSkeleton />;
@@ -119,8 +124,6 @@ export default function CaseDetailPage() {
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-  const createCommentMutation = useCreateComment(caseId);
-  const isSubmittingComment = createCommentMutation.isPending;
 
   const handleAddComment = async () => {
     if (!comment.trim() || !commentHeader) return;

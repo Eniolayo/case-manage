@@ -1,6 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { casesApi, alertsApi, customersApi, configApi } from "@/lib/api";
-import { MOCK_EVIDENCE_CONFIG, MOCK_SOURCE_CONFIG } from "@/lib/mock-data";
+import {
+  MOCK_EVIDENCE_CONFIG,
+  MOCK_SOURCE_CONFIG,
+  MOCK_CUSTOMER_SOURCE_DATA,
+} from "@/lib/mock-data";
 import type {
   CaseListParams,
   CommentListParams,
@@ -182,6 +186,44 @@ export const useSourceConfig = (
       return MOCK_SOURCE_CONFIG;
     },
     enabled: enabled && !!sourceSystem,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
+  });
+};
+
+// Hook to fetch customer source data based on the source API configuration
+export const useCustomerSourceData = (
+  customerId: number,
+  enabled: boolean = true
+) => {
+  return useQuery({
+    queryKey: ["customerSourceData", customerId],
+    queryFn: async () => {
+      // Using mock data for now - replace with real API call when ready
+      // This would normally call the source_api.url with the customerId
+
+      // Simulate API delay for realism
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      const mockData = MOCK_CUSTOMER_SOURCE_DATA[customerId];
+
+      if (mockData) {
+        return mockData;
+      }
+
+      // If no mock data found, return a default structure
+      // This handles cases where new customer IDs are added but mock data hasn't been updated
+      return {
+        customer_id: `CUST_${customerId}`,
+        customer_name: "", // Will fall back to customerData.name
+        phone_number: "", // Will fall back to customerData.phoneNumber
+        account_id: `ACC_${customerId + 1000}`,
+        card_issue_date: "2023-01-01",
+        card_status: "Active",
+        card_type: "Standard",
+      };
+    },
+    enabled: enabled && !!customerId,
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: false,
   });

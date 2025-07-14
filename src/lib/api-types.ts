@@ -241,10 +241,15 @@ export interface SourceConfig {
     query_params: Record<string, any>;
     response_schema: Record<string, any>;
   };
+  created_at?: string;
+  updated_at?: string;
+  created_by?: number;
+  updated_by?: number;
 }
 
 export interface SourceConfigResponse {
   data: SourceConfig[];
+  total?: number;
 }
 
 // Generic Evidence types for case management system
